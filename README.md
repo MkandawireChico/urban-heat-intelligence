@@ -29,6 +29,9 @@ Early foundation. Research scoping and the transparent decision engine are being
 - `docs/RESEARCH_AND_SCOPE.md`: research gap, boundaries, and validation questions.
 - `docs/ARCHITECTURE.md`: planned system design.
 - `docs/DATA_CATALOGUE.md`: source inventory, resolution, use and limitations.
+
+- `docs/GEOSPATIAL_PROCESSING.md`: satellite indicator formulas, QA rules and raster workflow.
+
 - `docs/GEOJSON_BOUNDARY_WORKFLOW.md`: boundary intake and validation rules.
 - `data/catalogue.json`: machine-readable dataset provenance register.
 - `src/heatadapt/`: core Python decision-support and input-validation package.
