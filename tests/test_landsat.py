@@ -11,7 +11,7 @@ from heatadapt.landsat import (
 
 def test_landsat_surface_temperature_uses_collection_two_scale() -> None:
     result = landsat_surface_temperature_celsius([44_947], [0])
-    assert result[0] == pytest.approx(29.45, abs=0.02)
+    assert result[0] == pytest.approx(29.4797, abs=0.001)
 
 
 def test_fill_cloud_and_shadow_pixels_are_masked() -> None:
