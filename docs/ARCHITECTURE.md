@@ -22,6 +22,9 @@ A dependency-light GeoJSON validator checks Polygon and MultiPolygon FeatureColl
 
 GeoPandas and Rasterio are optional dependencies. Python 3.11 compatibility is retained by constraining Rasterio below 1.5; the base package does not install the geospatial stack. Candidate later tools include Xarray, Rioxarray and DuckDB. Final choices depend on source formats and deployment constraints.
 
+
+The first pixel-level processing helpers are implemented in `heatadapt.landsat`. They apply the documented Landsat Collection 2 surface-temperature scale and offset, mask selected QA_PIXEL conditions and optionally mask saturated pixels. A normalized-difference helper supports pre-scaled reflectance inputs. Raster I/O, compositing and reprojection remain separate future stages.
+
 ### Decision engine
 
 A pure Python package will represent candidate interventions and planning areas, calculate transparent screening indicators, apply explicit budget and feasibility constraints, compare alternative equity and cost assumptions, and report why a candidate was ranked or excluded.
