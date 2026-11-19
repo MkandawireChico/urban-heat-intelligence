@@ -21,7 +21,13 @@ class PlanningArea:
             raise ValueError("area_id must not be empty")
         if not self.name.strip():
             raise ValueError("name must not be empty")
-        for field_name in ("heat_exposure", "population_exposure", "social_vulnerability", "data_confidence"):
+        indicator_fields = (
+            "heat_exposure",
+            "population_exposure",
+            "social_vulnerability",
+            "data_confidence",
+        )
+        for field_name in indicator_fields:
             value = getattr(self, field_name)
             if not 0.0 <= value <= 1.0:
                 raise ValueError(f"{field_name} must be between 0 and 1")
@@ -29,7 +35,7 @@ class PlanningArea:
 
 @dataclass(frozen=True, slots=True)
 class InterventionOption:
-    """A candidate intervention; benefit_potential is a scenario assumption, not a measured effect."""
+    """A candidate intervention with an assumed, not measured, benefit potential."""
 
     option_id: str
     area_id: str
