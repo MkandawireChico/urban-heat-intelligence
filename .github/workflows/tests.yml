@@ -22,3 +22,5 @@ jobs:
         run: pytest
       - name: Check formatting and lint
         run: ruff check .
+      - name: Check static types
+        run: mypy
