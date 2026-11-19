@@ -1,0 +1,86 @@
+[
+  {
+    "dataset_id": "landsat-collection-2-level-2",
+    "title": "Landsat Collection 2 Level-2 surface reflectance and surface temperature",
+    "provider": "United States Geological Survey",
+    "source_url": "https://www.usgs.gov/landsat-missions/landsat-collection-2",
+    "licence": "USGS data policy; confirm product-specific terms and attribution",
+    "spatial_resolution": "Thermal surface-temperature product distributed on a 30 m grid; native thermal measurement resolution differs by sensor",
+    "temporal_coverage": "Archive coverage depends on satellite generation and scene availability",
+    "intended_use": "Historical land-surface temperature patterns and optical indicators after QA masking",
+    "limitations": "Land-surface temperature is not near-surface air temperature, indoor temperature, personal exposure, or clinical heat risk. Cloud, emissivity, atmospheric correction, overpass time, and resampling affect interpretation.",
+    "status": "planned"
+  },
+  {
+    "dataset_id": "sentinel-2-level-2a",
+    "title": "Sentinel-2 Multi-Spectral Instrument Level-2A",
+    "provider": "Copernicus Data Space Ecosystem",
+    "source_url": "https://dataspace.copernicus.eu/",
+    "licence": "Copernicus Sentinel data terms; retain attribution and verify applicable conditions",
+    "spatial_resolution": "10 m, 20 m and 60 m depending on spectral band",
+    "temporal_coverage": "Global archive from 2015 onward; usable observations depend on cloud and scene coverage",
+    "intended_use": "Vegetation, built-surface and land-cover indicators",
+    "limitations": "Optical reflectance is not a direct measure of shade quality, tree health, access, water availability, or cooling benefit.",
+    "status": "planned"
+  },
+  {
+    "dataset_id": "worldpop-population",
+    "title": "WorldPop gridded population estimates",
+    "provider": "WorldPop, University of Southampton",
+    "source_url": "https://www.worldpop.org/",
+    "licence": "Check the licence and citation requirements for the selected country-year product",
+    "spatial_resolution": "Product-dependent; selected products include approximately 100 m grids",
+    "temporal_coverage": "Country and year availability varies by product and estimation method",
+    "intended_use": "Approximate population distribution for exposure screening",
+    "limitations": "Modelled population surfaces are estimates, not household counts or real-time population. Avoid treating small-area differences as exact.",
+    "status": "planned"
+  },
+  {
+    "dataset_id": "ghsl",
+    "title": "Global Human Settlement Layer",
+    "provider": "European Commission Joint Research Centre",
+    "source_url": "https://human-settlement.emergency.copernicus.eu/",
+    "licence": "Check the selected layer's dataset-specific licence and citation",
+    "spatial_resolution": "Layer-dependent, including gridded population and built-up products",
+    "temporal_coverage": "Multi-epoch products; exact years vary by layer",
+    "intended_use": "Independent built-up and population context and cross-checking",
+    "limitations": "Global modelled products may smooth local settlement detail and differ from national statistics.",
+    "status": "planned"
+  },
+  {
+    "dataset_id": "openstreetmap-malawi",
+    "title": "OpenStreetMap Malawi extract",
+    "provider": "OpenStreetMap contributors; extract distribution by Geofabrik",
+    "source_url": "https://download.geofabrik.de/africa/malawi.html",
+    "licence": "Open Database Licence (ODbL); attribution and share-alike obligations apply to qualifying derivative databases",
+    "spatial_resolution": "Feature-level vector data; completeness and positional quality vary by feature and location",
+    "temporal_coverage": "Continuously edited; extract timestamp must be recorded at download",
+    "intended_use": "Candidate buildings, roads, amenities, green spaces and public infrastructure",
+    "limitations": "Coverage is uneven and community-mapped. Missing features do not prove absence. Validate critical assets with local sources.",
+    "status": "planned"
+  },
+  {
+    "dataset_id": "malawi-administrative-boundaries",
+    "title": "Malawi administrative boundary datasets",
+    "provider": "National Spatial Data Centre and other authoritative national custodians, subject to confirmation",
+    "source_url": "https://www.nsdc.gov.mw/",
+    "licence": "Not yet confirmed; obtain source-specific permission and attribution terms before redistribution",
+    "spatial_resolution": "Vector administrative units; hierarchy and scale depend on the supplied dataset",
+    "temporal_coverage": "Version and effective date must be obtained from the data custodian",
+    "intended_use": "Boundary definition and aggregation units after authority and geometry checks",
+    "limitations": "Do not assume a district, city council, planning-area or functional urban boundary represents the same geography. Authority and currency require confirmation.",
+    "status": "planned"
+  },
+  {
+    "dataset_id": "era5-land",
+    "title": "ERA5-Land hourly reanalysis",
+    "provider": "Copernicus Climate Change Service",
+    "source_url": "https://cds.climate.copernicus.eu/datasets/reanalysis-era5-land",
+    "licence": "Copernicus Climate Data Store licence and attribution requirements",
+    "spatial_resolution": "Approximately 9 km native grid spacing",
+    "temporal_coverage": "1950 to near-present, with product-specific update latency",
+    "intended_use": "Regional meteorological context and seasonal background, not neighbourhood-scale temperature mapping",
+    "limitations": "Grid spacing is too coarse to resolve street-level urban heat variation. Reanalysis values are model-based estimates, not local station observations.",
+    "status": "planned"
+  }
+]
