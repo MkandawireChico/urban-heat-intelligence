@@ -28,7 +28,6 @@ class DatasetRecord:
             "dataset_id",
             "title",
             "provider",
-            "source_url",
             "licence",
             "spatial_resolution",
             "temporal_coverage",
