@@ -74,7 +74,8 @@ def load_catalogue(path: str | Path) -> list[DatasetRecord]:
         if missing:
             raise ValueError(f"Catalogue entry {index} is missing: {', '.join(sorted(missing))}")
         if unknown:
-            raise ValueError(f"Catalogue entry {index} has unknown fields: {', '.join(sorted(unknown))}")
+            fields = ", ".join(sorted(unknown))
+            raise ValueError(f"Catalogue entry {index} has unknown fields: {fields}")
         record = DatasetRecord(**item)
         if record.dataset_id in seen_ids:
             raise ValueError(f"Duplicate dataset_id: {record.dataset_id}")
