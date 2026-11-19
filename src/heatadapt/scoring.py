@@ -21,7 +21,7 @@ class RankedOption:
 def rank_interventions(
     areas: list[PlanningArea],
     options: list[InterventionOption],
-    weights: ScoringWeights = ScoringWeights(),
+    weights: ScoringWeights | None = None,
     *,
     maintenance_years: int = 5,
 ) -> list[RankedOption]:
@@ -33,11 +33,20 @@ def rank_interventions(
     if maintenance_years < 0:
         raise ValueError("maintenance_years must not be negative")
 
+    active_weights = weights if weights is not None else ScoringWeights()
     area_by_id = {area.area_id: area for area in areas}
     if len(area_by_id) != len(areas):
         raise ValueError("Planning area IDs must be unique")
 
-    weight_total = sum((weights.heat, weights.population, weights.vulnerability, weights.feasibility, weights.co_benefit))
+    weight_total = sum(
+        (
+            active_weights.heat,
+            active_weights.population,
+            active_weights.vulnerability,
+            active_weights.feasibility,
+            active_weights.co_benefit,
+        )
+    )
     ranked: list[RankedOption] = []
 
     for option in options:
@@ -52,7 +61,14 @@ def rank_interventions(
             "feasibility": option.feasibility,
             "co_benefit": option.co_benefit,
         }
-        score = sum(getattr(weights, key) * value for key, value in components.items()) / weight_total
+        score = sum(
+            getattr(active_weights, key) * value
+            for key, value in components.items()
+        ) / weight_total
+        lifecycle_cost = (
+            option.capital_cost
+            + maintenance_years * option.annual_maintenance_cost
+        )
         ranked.append(
             RankedOption(
                 option_id=option.option_id,
@@ -60,9 +76,16 @@ def rank_interventions(
                 intervention_type=option.intervention_type,
                 priority_score=round(score, 6),
                 evidence_confidence=area.data_confidence,
-                lifecycle_cost=option.capital_cost + maintenance_years * option.annual_maintenance_cost,
+                lifecycle_cost=lifecycle_cost,
                 component_scores=components,
             )
         )
 
-    return sorted(ranked, key=lambda item: (-item.priority_score, item.lifecycle_cost, item.option_id))
+    return sorted(
+        ranked,
+        key=lambda item: (
+            -item.priority_score,
+            item.lifecycle_cost,
+            item.option_id,
+        ),
+    )
