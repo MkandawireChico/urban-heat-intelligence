@@ -28,7 +28,10 @@ Early foundation. Research scoping and the transparent decision engine are being
 
 - `docs/RESEARCH_AND_SCOPE.md`: research gap, boundaries, and validation questions.
 - `docs/ARCHITECTURE.md`: planned system design.
-- `src/heatadapt/`: core Python decision-support package.
+- `docs/DATA_CATALOGUE.md`: source inventory, resolution, use and limitations.
+- `docs/GEOJSON_BOUNDARY_WORKFLOW.md`: boundary intake and validation rules.
+- `data/catalogue.json`: machine-readable dataset provenance register.
+- `src/heatadapt/`: core Python decision-support and input-validation package.
 - `tests/`: automated tests.
 
 ## Development
@@ -40,7 +43,18 @@ python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\\Scripts\\activate
 python -m pip install -e ".[dev]"
 pytest
+ruff check .
+mypy
 ```
+
+Install the optional geospatial stack when working with vector and raster processing:
+
+```bash
+python -m pip install -e ".[geo]"
+```
+
+Validate the source catalogue with `heatadapt-validate catalogue data/catalogue.json`.
+Validate a candidate WGS84 GeoJSON boundary with `heatadapt-validate boundary path/to/boundary.geojson`.
 
 ## Principles
 
