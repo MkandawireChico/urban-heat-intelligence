@@ -16,7 +16,11 @@ A registry of input datasets with source, licence, spatial and temporal coverage
 
 ### Geospatial pipeline
 
-Python tooling will validate, harmonise, and derive spatial indicators from suitable sources. Candidate technologies include GeoPandas, Rasterio, Xarray, Rioxarray, and DuckDB. Final choices depend on actual data formats and deployment constraints.
+The initial input layer is implemented. A JSON catalogue records each dataset's provider, source URL, licence, spatial and temporal coverage, intended use, limitations and acquisition status. A validator rejects incomplete records and duplicate identifiers.
+
+A dependency-light GeoJSON validator checks Polygon and MultiPolygon FeatureCollections, WGS84 coordinate ranges, non-empty geometries and closed linear rings. It reports feature counts, geometry types and bounds. This is a structural check only. It does not establish administrative authority, topology, positional accuracy or completeness.
+
+GeoPandas and Rasterio are optional dependencies. Python 3.11 compatibility is retained by constraining Rasterio below 1.5; the base package does not install the geospatial stack. Candidate later tools include Xarray, Rioxarray and DuckDB. Final choices depend on source formats and deployment constraints.
 
 ### Decision engine
 
@@ -40,6 +44,9 @@ FastAPI is the planned service layer. A React-based map and scenario interface i
 
 ```text
 .
+├── data/
+│   ├── catalogue.json
+│   └── README.md
 ├── docs/
 ├── src/
 │   └── heatadapt/
@@ -53,8 +60,10 @@ FastAPI is the planned service layer. A React-based map and scenario interface i
 
 1. Research scope, data inventory, and scientific safeguards.
 2. Transparent decision-engine primitives and tests.
-3. Blantyre data inventory and ingestion prototypes.
-4. Geospatial indicator pipeline.
-5. Scenario and uncertainty analysis.
-6. API and map interface.
-7. Local review, validation, and deployment.
+3. Dataset provenance register and boundary intake validation.
+4. Confirm an authoritative Blantyre study boundary and analysis units.
+5. Acquire and quality-check source datasets.
+6. Geospatial indicator pipeline.
+7. Scenario and uncertainty analysis.
+8. API and map interface.
+9. Local review, validation, and deployment.
