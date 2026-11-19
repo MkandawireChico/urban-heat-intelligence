@@ -25,15 +25,15 @@
   },
   {
     "dataset_id": "worldpop-population",
-    "title": "WorldPop gridded population estimates",
+    "title": "WorldPop Global2 R2025A population and age-sex estimates",
     "provider": "WorldPop, University of Southampton",
-    "source_url": "https://www.worldpop.org/",
-    "licence": "Check the licence and citation requirements for the selected country-year product",
-    "spatial_resolution": "Product-dependent; selected products include approximately 100 m grids",
-    "temporal_coverage": "Country and year availability varies by product and estimation method",
+    "source_url": "https://api.worldpop.org/v3/documentation",
+    "licence": "CC BY 4.0 for Global2 R2025A; retain attribution and cite the dataset DOI",
+    "spatial_resolution": "3 arc-seconds, approximately 100 m at the equator",
+    "temporal_coverage": "Annual estimates from 2015 to 2030",
     "intended_use": "Approximate population distribution for exposure screening",
-    "limitations": "Modelled population surfaces are estimates, not household counts or real-time population. Avoid treating small-area differences as exact.",
-    "status": "planned"
+    "limitations": "Modelled population estimates, not household counts or real-time population. Record API version, year, estimation method and uncertainty. Do not treat small-area differences as exact.",
+    "status": "assessed"
   },
   {
     "dataset_id": "ghsl",
