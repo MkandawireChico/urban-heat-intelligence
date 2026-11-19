@@ -17,7 +17,9 @@ def _parser() -> argparse.ArgumentParser:
         description="Validate Urban Heat Intelligence project input files.",
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
-    catalogue_parser = subparsers.add_parser("catalogue", help="Validate the JSON dataset catalogue")
+    catalogue_parser = subparsers.add_parser(
+        "catalogue", help="Validate the JSON dataset catalogue"
+    )
     catalogue_parser.add_argument("path", help="Path to catalogue.json")
     boundary_parser = subparsers.add_parser("boundary", help="Validate a GeoJSON boundary file")
     boundary_parser.add_argument("path", help="Path to a GeoJSON FeatureCollection")
