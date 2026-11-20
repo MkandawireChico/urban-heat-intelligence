@@ -117,7 +117,7 @@ def process_landsat_surface_temperature(
         }
 
 
-def _require_matching_grid(reference: rasterio.DatasetReader, candidate: rasterio.DatasetReader, label: str) -> None:
+def _require_matching_grid(\n    reference: rasterio.DatasetReader,\n    candidate: rasterio.DatasetReader,\n    label: str,\n) -> None:
     if (
         reference.width != candidate.width
         or reference.height != candidate.height
