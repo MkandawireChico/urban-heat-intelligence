@@ -22,7 +22,7 @@ Satellite land-surface temperature is not the same as air temperature, indoor te
 
 ## Project status
 
-Early foundation. Research scoping and the transparent decision engine are being established before the geospatial pipeline and user interface.
+Geospatial foundation in progress. The repository now includes dataset and boundary validation, Landsat Collection 2 temperature conversion, GeoTIFF processing with QA masks, NDVI helpers, and STAC scene discovery. No Blantyre imagery or population raster has yet been downloaded or validated.
 
 ## Repository guide
 
@@ -44,13 +44,13 @@ Python 3.11 or later is recommended.
 ```bash
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\\Scripts\\activate
-python -m pip install -e ".[dev]"
+python -m pip install -e ".[dev,geo]"
 pytest
 ruff check .
 mypy
 ```
 
-Install the optional geospatial stack when working with vector and raster processing:
+The geo extra includes GeoPandas, NumPy, Rasterio and the STAC client. Install it for the complete test suite and geospatial processing:
 
 ```bash
 python -m pip install -e ".[geo]"
