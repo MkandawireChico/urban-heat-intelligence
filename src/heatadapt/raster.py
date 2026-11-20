@@ -7,6 +7,7 @@ It preserves the input grid and CRS; reprojection and clipping are separate step
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import rasterio  # type: ignore[import-untyped]
@@ -118,8 +119,8 @@ def process_landsat_surface_temperature(
 
 
 def _require_matching_grid(
-    reference: rasterio.DatasetReader,
-    candidate: rasterio.DatasetReader,
+    reference: Any,
+    candidate: Any,
     label: str,
 ) -> None:
     if (
