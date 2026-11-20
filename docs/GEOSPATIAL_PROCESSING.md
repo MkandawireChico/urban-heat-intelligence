@@ -314,3 +314,40 @@ treat scene-level cloud cover as pixel-level quality control.
 
 Both commands require network access from the machine running them. Keep the
 original boundary files and generated JSON outputs with the analysis record.
+
+
+### Download a gridded population surface
+
+Ward aggregates are useful for comparisons between administrative areas. A
+gridded population surface is needed for pixel-based population overlays and
+for calculating population-weighted screening indicators. WorldPop v3 provides
+a clipped GeoTIFF for a supplied polygon through its `/raster` endpoint.
+
+Download the 2025 100 m population raster for the dissolved Blantyre outline:
+
+```bash
+heatadapt-data-intake worldpop-raster \
+  --boundary data/boundaries/processed/blantyre_city_2018.geojson \
+  --year 2025 \
+  --resolution 100m \
+  --output data/processed/worldpop_blantyre_2025_100m.tif
+```
+
+The command also writes a JSON provenance sidecar beside the GeoTIFF. It
+records the request, retrieval timestamp, source endpoint, response summary
+headers, file size and SHA-256 checksum. Existing outputs are protected unless
+`--force` is supplied.
+
+WorldPop documents this raster as Float32 people per cell in EPSG:4326.
+Documented nodata is -99999 outside the requested area and where no data is
+available; zero means no modelled residents. Preserve this distinction in
+downstream processing. Do not convert nodata to zero. The downloaded file
+should be inspected with Rasterio before analysis, including CRS, transform,
+dimensions, dtype, nodata, mask and the sum of valid cell values. Compare the
+valid-cell sum with the API's `X-Total-Population` header and the ward batch
+aggregate, allowing for documented rounding and boundary rasterisation.
+
+The WorldPop surface is modelled population, not a census enumeration or a
+measurement of daytime presence. The provisional 2018 boundary also limits
+the geographic interpretation. Do not infer individual-level exposure from
+the raster.
