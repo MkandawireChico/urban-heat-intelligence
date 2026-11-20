@@ -22,16 +22,14 @@ Satellite land-surface temperature is not the same as air temperature, indoor te
 
 ## Project status
 
-Geospatial foundation in progress. The repository now includes dataset and boundary validation, Landsat Collection 2 temperature conversion, GeoTIFF processing with QA masks, NDVI helpers, and STAC scene discovery. No Blantyre imagery or population raster has yet been downloaded or validated.
+Geospatial foundation in progress. The repository includes dataset and boundary validation, Landsat Collection 2 temperature conversion, GeoTIFF processing with QA masks, NDVI helpers, STAC scene discovery, boundary preparation, and per-area raster summaries with valid-pixel coverage diagnostics. The World Bank Blantyre boundary is approved as a provisional input, but its archive has not yet been retrieved or validated. No Blantyre imagery or population raster has yet been downloaded or validated.
 
 ## Repository guide
 
 - `docs/RESEARCH_AND_SCOPE.md`: research gap, boundaries, and validation questions.
 - `docs/ARCHITECTURE.md`: planned system design.
 - `docs/DATA_CATALOGUE.md`: source inventory, resolution, use and limitations.
-
-- `docs/GEOSPATIAL_PROCESSING.md`: satellite indicator formulas, QA rules and raster workflow.
-
+- `docs/GEOSPATIAL_PROCESSING.md`: satellite indicator formulas, QA rules, zonal summaries and raster workflow.
 - `docs/GEOJSON_BOUNDARY_WORKFLOW.md`: boundary intake and validation rules.
 - `data/catalogue.json`: machine-readable dataset provenance register.
 - `src/heatadapt/`: core Python decision-support and input-validation package.
@@ -50,11 +48,7 @@ ruff check .
 mypy
 ```
 
-The geo extra includes GeoPandas, NumPy, Rasterio and the STAC client. Install it for the complete test suite and geospatial processing:
-
-```bash
-python -m pip install -e ".[geo]"
-```
+The geo extra includes GeoPandas, NumPy, Rasterio and the STAC client. Install it for the complete test suite and geospatial processing.
 
 Validate the source catalogue with `heatadapt-validate catalogue data/catalogue.json`.
 Validate a candidate WGS84 GeoJSON boundary with `heatadapt-validate boundary path/to/boundary.geojson`.
