@@ -68,17 +68,15 @@ Example after installing the geo extra:
 import geopandas as gpd
 from heatadapt.zonal import summarise_raster_by_area
 
-wards = gpd.read_file("data/boundaries/processed/blantyre_wards.geojson")
+wards = gpd.read_file("data/boundaries/processed/blantyre_wards_2018.geojson")
 summary = summarise_raster_by_area(
     "data/processed/landsat_lst_celsius.tif",
     wards,
-    id_field="ward_id",
+    id_field="source_id",
 )
 ```
 
-Confirm the ward identifier field in the source data before running the
-example. The current Blantyre boundary archive has not yet been retrieved, so
-this example is a pipeline template, not a completed city analysis.
+The processed 2018 ward GeoJSON uses `source_id` as the stable source identifier and `ward_name` as the display name. The geometry is provisional. The example is a processing template until suitable imagery has been downloaded and quality-checked.
 
 ## Planned raster pipeline
 
@@ -104,11 +102,11 @@ approved study geometry. It returns item identifiers, acquisition metadata,
 cloud-cover metadata and asset links. It does not download imagery or imply
 that a scene is suitable for analysis.
 
-The default endpoint is the Copernicus Data Space STAC API. Its current
-documented endpoint is
-https://stac.dataspace.copernicus.eu/v1/ and the Sentinel-2 Level-2A collection
-is sentinel-2-l2a. The client also accepts another STAC endpoint and collection
-IDs, so provider choice stays explicit.
+The default endpoint is the Microsoft Planetary Computer STAC API at
+https://planetarycomputer.microsoft.com/api/stac/v1. Use the `landsat-c2-l2`
+collection for Landsat Collection 2 Level-2 data, including surface temperature
+and surface reflectance assets. The client accepts another STAC endpoint and
+collection IDs, so provider choice stays explicit.
 
 Example after installing the geo extra:
 
@@ -116,7 +114,7 @@ Example after installing the geo extra:
 from heatadapt.stac import search_stac_scenes
 
 scenes = search_stac_scenes(
-    collection_ids=["sentinel-2-l2a"],
+    collection_ids=["landsat-c2-l2"],
     intersects=approved_boundary_geometry,
     datetime_range="2025-10-01/2025-11-01",
     max_cloud_cover=20,
@@ -144,7 +142,11 @@ credentials, tokens or downloaded source imagery to the repository.
   explicit version control.
 
 The project does not yet claim to have downloaded, processed or validated
-Blantyre scenes or population rasters.
+Blantyre satellite scenes, population rasters or live WorldPop ward estimates.
+The WorldPop client is implemented and covered by mocked tests; live API
+execution remains pending. The processed boundary files are available in the
+boundary delivery package and are not yet committed as full-resolution vector
+files in this repository.
 
 
 ## Multi-scene indicator composites
@@ -193,9 +195,11 @@ compatibility, QA masks, spatial grid and acquisition metadata.
 
 `heatadapt.worldpop.population_in_area` queries the WorldPop Global2 R2025A
 API for a supplied WGS84 Polygon or MultiPolygon and year from 2015 through
-2030. It returns total modelled population, polygon area, population density,
-data year, source release and API processing time. The request is made over
-HTTPS and does not require an API key within the documented public limits.
+2030. `heatadapt.worldpop.population_by_areas` submits a FeatureCollection of
+up to 1,000 named, uniquely identified polygons to the batch endpoint. The batch
+response returns each area's total, area, density, share of the submitted total
+and rank. Requests use HTTPS and do not require an API key within the documented
+public limits.
 
 Example after installing the project:
 
@@ -212,11 +216,11 @@ estimate = population_in_area(
 print(estimate.to_dict())
 ```
 
-This endpoint returns a polygon aggregate. It does not download a population
-GeoTIFF or provide cell-level population values. Use the WorldPop country
-GeoTIFF files or a documented raster endpoint when cell-level overlays and
-population-weighted pixel analysis are required. Do not infer a ward-level
-population distribution from an aggregate total.
+The `/population` and `/batch` endpoints return polygon aggregates. They do
+not provide cell-level population values. Use the WorldPop `/raster` endpoint
+or country GeoTIFF files when cell-level overlays and population-weighted pixel
+analysis are required. Do not infer a ward-level population distribution from
+an aggregate total.
 
 WorldPop Global2 R2025A provides annual estimates for 2015–2030 at roughly
 100 m at the equator and is licensed CC BY 4.0. Values are modelled estimates,
