@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import io
 import json
-from urllib.request import Request
-from urllib.error import HTTPError, URLError
+import urllib.error
+import urllib.request
 
 import pytest
 
@@ -43,9 +43,9 @@ def _payload(**overrides):
 
 
 def test_queries_worldpop_and_returns_provenance(monkeypatch):
-    captured: list[Request] = []
+    captured: list[urllib.request.Request] = []
 
-    def fake_urlopen(request: Request, timeout: float = 60.0):
+    def fake_urlopen(request: urllib.request.Request, timeout: float = 60.0):
         captured.append(request)
         return _Response(_payload())
 
@@ -82,7 +82,7 @@ def test_rejects_non_polygon_geometry():
 
 
 def test_rejects_mismatched_year_returned_by_api(monkeypatch):
-    def fake_urlopen(_request: Request, timeout: float = 60.0):
+    def fake_urlopen(_request: urllib.request.Request, timeout: float = 60.0):
         return _Response(_payload(data_year=2024))
 
     monkeypatch.setattr("heatadapt.worldpop.urlopen", fake_urlopen)
@@ -91,7 +91,7 @@ def test_rejects_mismatched_year_returned_by_api(monkeypatch):
 
 
 def test_reports_api_error_response(monkeypatch):
-    api_error = HTTPError(
+    api_error = urllib.error.HTTPError(
         "https://api.worldpop.org/v3/population",
         503,
         "Unavailable",
@@ -99,7 +99,7 @@ def test_reports_api_error_response(monkeypatch):
         io.BytesIO(b'{"error":"data_unavailable","message":"No data"}'),
     )
 
-    def fake_urlopen(_request: Request, timeout: float = 60.0):
+    def fake_urlopen(_request: urllib.request.Request, timeout: float = 60.0):
         raise api_error
 
     monkeypatch.setattr("heatadapt.worldpop.urlopen", fake_urlopen)
@@ -108,8 +108,8 @@ def test_reports_api_error_response(monkeypatch):
 
 
 def test_reports_network_errors(monkeypatch):
-    def fake_urlopen(_request: Request, timeout: float = 60.0):
-        raise URLError("offline")
+    def fake_urlopen(_request: urllib.request.Request, timeout: float = 60.0):
+        raise urllib.error.URLError("offline")
 
     monkeypatch.setattr("heatadapt.worldpop.urlopen", fake_urlopen)
     with pytest.raises(RuntimeError, match="Unable to reach"):
@@ -165,9 +165,9 @@ def _batch_payload():
 
 
 def test_batch_queries_all_areas_and_preserves_ids(monkeypatch):
-    captured: list[Request] = []
+    captured: list[urllib.request.Request] = []
 
-    def fake_urlopen(req: Request, timeout: float = 60.0):
+    def fake_urlopen(req: urllib.request.Request, timeout: float = 60.0):
         captured.append(req)
         return _Response(_batch_payload())
 
@@ -214,7 +214,7 @@ def test_batch_rejects_mismatched_response_ids(monkeypatch):
     payload = _batch_payload()
     payload["features"][1]["id"] = "ward-03"
 
-    def fake_urlopen(req: Request, timeout: float = 60.0):
+    def fake_urlopen(req: urllib.request.Request, timeout: float = 60.0):
         return _Response(payload)
 
     monkeypatch.setattr("heatadapt.worldpop.urlopen", fake_urlopen)
