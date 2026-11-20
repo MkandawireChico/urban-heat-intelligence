@@ -29,6 +29,7 @@ def _parser() -> argparse.ArgumentParser:
 def main(argv: Sequence[str] | None = None) -> int:
     """Run a validation command and return a process exit code."""
     args = _parser().parse_args(argv)
+    result: dict[str, object]
     try:
         if args.command == "catalogue":
             records = load_catalogue(args.path)
