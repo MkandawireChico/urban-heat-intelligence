@@ -19,6 +19,7 @@ geo = ["geopandas>=1.1,<1.3", "numpy>=2.0,<3", "pystac-client>=0.8,<0.10", "rast
 [project.scripts]
 heatadapt-validate = "heatadapt.validation:main"
 heatadapt-prepare-boundary = "heatadapt.boundary:main"
+heatadapt-data-intake = "heatadapt.data_intake:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
