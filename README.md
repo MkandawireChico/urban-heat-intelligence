@@ -93,3 +93,20 @@ imagery. Both outputs record the boundary checksum and query provenance.
 See [the geospatial processing guide](docs/GEOSPATIAL_PROCESSING.md) for
 interpretation limits and next processing steps. No live query results are
 committed yet.
+
+
+To download the gridded population surface for pixel-level analysis, use the
+dissolved city outline rather than the ward collection:
+
+```bash
+heatadapt-data-intake worldpop-raster \
+  --boundary data/boundaries/processed/blantyre_city_2018.geojson \
+  --year 2025 \
+  --resolution 100m \
+  --output data/processed/worldpop_blantyre_2025_100m.tif
+```
+
+The command writes a GeoTIFF and a JSON provenance sidecar. Inspect the raster
+grid, nodata and valid-cell population sum before using it in exposure
+calculations. See the geospatial processing guide for the interpretation
+limits.
