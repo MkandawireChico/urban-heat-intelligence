@@ -41,6 +41,37 @@ This catalogue records candidate datasets before ingestion. Inclusion does not m
 7. Do not fill missing local cost, land access, water, maintenance or implementation responsibility fields with invented values. Mark them unknown and prevent unsupported feasibility claims.
 8. Do not publish sensitive household-level or personally identifying field data. Prefer aggregated spatial units and review disclosure risk.
 
+## Blantyre boundary decision
+
+Blantyre City Council's Town Planning page identifies the Blantyre Urban
+Structure Plan 2024–2039 as its strategic planning framework. The linked April
+2024 document is labelled a draft. In that draft, the current city boundary is
+used as the urban edge, while five proposed extension areas totalling 2,863 ha
+are described separately. The draft states an intention to begin the extension
+process in 2025 with a target completion in 2030.
+
+This distinction matters for the study design. Do not combine the existing
+city boundary and proposed extension areas into one polygon. The baseline
+analysis should use the current legally recognised city boundary. Proposed
+extension areas should be a separate future-planning scenario if the Council
+confirms their status and provides usable geometry.
+
+The World Bank Malawi City Extents dataset is a useful candidate because it
+includes Blantyre City and ward polygons, but its Blantyre file dates to 2018.
+Compare it with the boundary and ward data held by Blantyre City Council and
+the National Spatial Data Centre before adopting it. Blantyre City Council's
+planning page also states that the Council holds a city-wide GIS database and
+provides geospatial information for planning purposes.
+
+Sources:
+- Blantyre City Council Town Planning: https://bccmw.com/planning.html
+- Draft Blantyre Urban Structure Plan 2024–2039:
+  https://bccmw.com/assets/uploads/2024/04/Draft-Blantyre-Urban-Structure-Plan.pdf
+- World Bank Malawi City Extents:
+  https://datacatalog.worldbank.org/search/dataset/0042046/malawi-city-extents
+- National Spatial Data Centre administrative units:
+  https://salb.un.org/en/data/mwi
+
 ## Local evidence still required
 
 Remote sensing and global datasets cannot establish the local delivery conditions needed for credible intervention planning. A later fieldwork or partner-validation phase must collect or verify:
