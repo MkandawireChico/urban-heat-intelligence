@@ -1,0 +1,29 @@
+{
+  "boundary_id": "blantyre-city-world-bank-2018-provisional",
+  "display_name": "Blantyre City boundary and wards",
+  "provider": "World Bank Data Catalog",
+  "dataset": "Malawi City Extents, dataset 0042046",
+  "source_page": "https://datacatalog.worldbank.org/search/dataset/0042046/malawi-city-extents",
+  "download_url": "https://datacatalogfiles.worldbank.org/ddh-published/0042046/1/DR0052566/mwi_blantyrecity.zip",
+  "licence": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+  "source_last_updated": "2018-02-24",
+  "user_approval_date": "2026-11-20",
+  "use_status": "provisional_for_pipeline_development",
+  "intended_use": [
+    "pipeline tests",
+    "initial city extent visualisation",
+    "provisional spatial screening"
+  ],
+  "prohibited_interpretations": [
+    "current legally authoritative boundary",
+    "current planning boundary without council confirmation",
+    "Blantyre District boundary",
+    "future extension areas"
+  ],
+  "attribution": "World Bank. Malawi City Extents. Blantyre City shapefile, last updated 24 February 2018. Licensed under CC BY 4.0.",
+  "local_file_expected": "data/boundaries/world_bank/blantyre_city_2018.zip",
+  "processed_file_expected": "data/boundaries/processed/blantyre_city_2018.geojson",
+  "retrieval_status": "source identified; archive not yet retrieved or validated",
+  "validation_status": "pending",
+  "notes": "Keep the original archive unchanged. Record retrieval date and SHA-256 after download. Inspect archive contents and select the city boundary and ward layers by attributes, not filename alone. Validate geometry, CRS, extent and feature attributes. Preserve ward polygons separately from the dissolved city outline."
+}
