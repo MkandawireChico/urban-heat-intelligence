@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import io
 import json
-import unittest.mock
 import urllib.error
+import urllib.request
 
 import pytest
 
@@ -42,11 +42,17 @@ def _payload(**overrides):
     return values | overrides
 
 
-def test_queries_worldpop_and_returns_provenance():
-    with unittest.mock.patch("heatadapt.worldpop.urlopen", return_value=_Response(_payload())) as mocked:
-        result = population_in_area(POLYGON, year=2025)
+def test_queries_worldpop_and_returns_provenance(monkeypatch):
+    captured: list[urllib.request.Request] = []
 
-    request = mocked.call_args.args[0]
+    def fake_urlopen(request: urllib.request.Request, timeout: float = 60.0):
+        captured.append(request)
+        return _Response(_payload())
+
+    monkeypatch.setattr("heatadapt.worldpop.urlopen", fake_urlopen)
+    result = population_in_area(POLYGON, year=2025)
+
+    request = captured[0]
     sent = json.loads(request.data)
     assert request.full_url == "https://api.worldpop.org/v3/population"
     assert sent == {"geojson": POLYGON, "year": 2025}
@@ -75,16 +81,16 @@ def test_rejects_non_polygon_geometry():
         population_in_area({"type": "Point", "coordinates": [33.8, -15.8]}, year=2025)
 
 
-def test_rejects_mismatched_year_returned_by_api():
-    with unittest.mock.patch(
-        "heatadapt.worldpop.urlopen",
-        return_value=_Response(_payload(data_year=2024)),
-    ):
-        with pytest.raises(ValueError, match="requested"):
-            population_in_area(POLYGON, year=2025)
+def test_rejects_mismatched_year_returned_by_api(monkeypatch):
+    def fake_urlopen(_request: urllib.request.Request, timeout: float = 60.0):
+        return _Response(_payload(data_year=2024))
+
+    monkeypatch.setattr("heatadapt.worldpop.urlopen", fake_urlopen)
+    with pytest.raises(ValueError, match="requested"):
+        population_in_area(POLYGON, year=2025)
 
 
-def test_reports_api_error_response():
+def test_reports_api_error_response(monkeypatch):
     error = urllib.error.HTTPError(
         "https://api.worldpop.org/v3/population",
         503,
@@ -92,12 +98,19 @@ def test_reports_api_error_response():
         {},
         io.BytesIO(b'{"error":"data_unavailable","message":"No data"}'),
     )
-    with unittest.mock.patch("heatadapt.worldpop.urlopen", side_effect=error):
-        with pytest.raises(RuntimeError, match="No data"):
-            population_in_area(POLYGON, year=2025)
+
+    def fake_urlopen(_request: urllib.request.Request, timeout: float = 60.0):
+        raise error
+
+    monkeypatch.setattr("heatadapt.worldpop.urlopen", fake_urlopen)
+    with pytest.raises(RuntimeError, match="No data"):
+        population_in_area(POLYGON, year=2025)
 
 
-def test_reports_network_errors():
-    with unittest.mock.patch("heatadapt.worldpop.urlopen", side_effect=urllib.error.URLError("offline")):
-        with pytest.raises(RuntimeError, match="Unable to reach"):
-            population_in_area(POLYGON, year=2025)
+def test_reports_network_errors(monkeypatch):
+    def fake_urlopen(_request: urllib.request.Request, timeout: float = 60.0):
+        raise urllib.error.URLError("offline")
+
+    monkeypatch.setattr("heatadapt.worldpop.urlopen", fake_urlopen)
+    with pytest.raises(RuntimeError, match="Unable to reach"):
+        population_in_area(POLYGON, year=2025)
