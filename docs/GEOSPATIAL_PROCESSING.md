@@ -60,6 +60,43 @@ cooling caused by a proposed intervention.
 10. Review maps and summary statistics before using any indicator in a decision
     model.
 
+## STAC scene discovery
+
+The optional STAC client searches a catalogue by collection, date interval and
+approved study geometry. It returns item identifiers, acquisition metadata,
+cloud-cover metadata and asset links. It does not download imagery or imply
+that a scene is suitable for analysis.
+
+The default endpoint is the Copernicus Data Space STAC API. Its current
+documented endpoint is
+https://stac.dataspace.copernicus.eu/v1/ and the Sentinel-2 Level-2A collection
+is sentinel-2-l2a. The client also accepts another STAC endpoint and collection
+IDs, so provider choice stays explicit.
+
+Example after installing the geo extra:
+
+```python
+from heatadapt.stac import search_stac_scenes
+
+scenes = search_stac_scenes(
+    collection_ids=["sentinel-2-l2a"],
+    intersects=approved_boundary_geometry,
+    datetime_range="2025-10-01/2025-11-01",
+    max_cloud_cover=20,
+    limit=100,
+)
+```
+
+Use an approved GeoJSON Polygon or MultiPolygon in WGS84 coordinates. Choose
+the date interval to match the research question and season. Review scene
+footprints, cloud cover, valid-pixel coverage, acquisition time and processing
+metadata before selecting assets. Cloud cover is a scene-level screening field,
+not a substitute for pixel-level QA.
+
+The STAC client returns asset URLs as metadata only. Some providers protect
+asset downloads or require signed URLs and authentication. Do not commit
+credentials, tokens or downloaded source imagery to the repository.
+
 ## Known source rules
 
 - Landsat Collection 2 surface temperature scale and offset: USGS documentation.
