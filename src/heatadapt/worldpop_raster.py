@@ -8,6 +8,7 @@ import math
 import os
 import tempfile
 from dataclasses import asdict, dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 from urllib.error import HTTPError, URLError
@@ -129,9 +130,7 @@ def download_population_raster(
     )
     sidecar = {
         "record_type": "worldpop_population_raster",
-        "retrieved_at_utc": __import__("datetime").datetime.now(
-            __import__("datetime").UTC
-        ).isoformat(),
+        "retrieved_at_utc": datetime.now(UTC).isoformat(),
         "request": {
             "year": year,
             "resolution": resolution,
