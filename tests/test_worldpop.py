@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+# Ruff treats the src-layout package import inconsistently in this test module.
+# Other import rules remain enabled.
+# ruff: noqa: I001
+
 import io
 import json
 from typing import Any
