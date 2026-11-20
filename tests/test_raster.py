@@ -5,7 +5,11 @@ import pytest
 import rasterio
 from rasterio.transform import from_origin
 
-from heatadapt.raster import OUTPUT_NODATA, process_landsat_surface_temperature
+from heatadapt.raster import (
+    OUTPUT_NODATA,
+    inspect_worldpop_population_raster,
+    process_landsat_surface_temperature,
+)
 
 
 def _write_band(path, values, *, crs="EPSG:32636", transform=None):
@@ -63,3 +67,48 @@ def test_rejects_missing_crs(tmp_path):
 
     with pytest.raises(ValueError, match="declare a CRS"):
         process_landsat_surface_temperature(st, qa, tmp_path / "out.tif")
+
+
+
+def _write_population_raster(path, values, *, nodata=-99999.0, crs="EPSG:4326"):
+    array = np.asarray(values, dtype="float32")
+    with rasterio.open(
+        path,
+        "w",
+        driver="GTiff",
+        width=array.shape[1],
+        height=array.shape[0],
+        count=1,
+        dtype="float32",
+        crs=crs,
+        transform=from_origin(33.7, -15.8, 0.001, 0.001),
+        nodata=nodata,
+    ) as dataset:
+        dataset.write(array, 1)
+
+
+def test_inspects_worldpop_raster_and_keeps_zero_distinct_from_nodata(tmp_path):
+    raster = tmp_path / "worldpop.tif"
+    _write_population_raster(raster, [[10.0, 0.0, -99999.0], [5.0, 2.0, -99999.0]])
+
+    report = inspect_worldpop_population_raster(raster, expected_total_population=17.0)
+
+    assert report["crs"] == "EPSG:4326"
+    assert report["pixel_count"] == 6
+    assert report["valid_pixel_count"] == 4
+    assert report["nodata_or_nonfinite_pixel_count"] == 2
+    assert report["zero_population_pixel_count"] == 1
+    assert report["population_sum_people"] == pytest.approx(17.0)
+    assert report["difference_from_expected_people"] == pytest.approx(0.0)
+
+
+def test_population_raster_inspection_rejects_wrong_crs_and_negative_valid_cells(tmp_path):
+    wrong_crs = tmp_path / "wrong_crs.tif"
+    _write_population_raster(wrong_crs, [[1.0]], crs="EPSG:32736")
+    with pytest.raises(ValueError, match="EPSG:4326"):
+        inspect_worldpop_population_raster(wrong_crs)
+
+    negative = tmp_path / "negative.tif"
+    _write_population_raster(negative, [[-1.0]])
+    with pytest.raises(ValueError, match="negative population"):
+        inspect_worldpop_population_raster(negative)
