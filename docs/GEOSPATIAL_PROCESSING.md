@@ -1,9 +1,9 @@
-# Initial satellite processing contract
+"""Initial satellite processing contract
 
 This project begins with small, independently testable pixel transformations.
-Raster reading, reprojection, spatial masking, compositing and export will be
-implemented as separate pipeline stages after the study boundary and source
-scenes have been confirmed.
+Raster reading, reprojection, spatial masking, compositing and export are
+implemented as separate pipeline stages.
+"""
 
 ## Landsat Collection 2 Level-2 surface temperature
 
@@ -43,6 +43,43 @@ NDVI is a vegetation greenness indicator. It does not measure shade access,
 tree species, canopy height, water availability, maintenance capacity or
 cooling caused by a proposed intervention.
 
+## Per-area raster summaries
+
+`heatadapt.zonal.summarise_raster_by_area` calculates per-polygon summaries
+from a single-band indicator raster. It reprojects planning polygons to the
+raster CRS, uses the raster cell-centre inclusion rule, excludes masked and
+non-finite pixels, and reports:
+
+- Number of raster pixels falling inside each polygon.
+- Number and fraction of valid pixels.
+- Mean, median, 90th percentile, minimum and maximum of valid pixel values.
+- Raster CRS used for the calculation.
+
+A polygon with no valid pixels receives null statistics rather than zeros.
+The valid fraction is a coverage diagnostic, not a measure of data accuracy.
+The function does not resample the raster, estimate missing values, weight
+pixels by partial polygon overlap or convert pixel counts to area. For
+geographic rasters, pixel areas vary with latitude; use a suitable projected
+grid before area-based comparisons.
+
+Example after installing the geo extra:
+
+```python
+import geopandas as gpd
+from heatadapt.zonal import summarise_raster_by_area
+
+wards = gpd.read_file("data/boundaries/processed/blantyre_wards.geojson")
+summary = summarise_raster_by_area(
+    "data/processed/landsat_lst_celsius.tif",
+    wards,
+    id_field="ward_id",
+)
+```
+
+Confirm the ward identifier field in the source data before running the
+example. The current Blantyre boundary archive has not yet been retrieved, so
+this example is a pipeline template, not a completed city analysis.
+
 ## Planned raster pipeline
 
 1. Search scene catalogues using a confirmed study geometry and time window.
@@ -55,8 +92,8 @@ cooling caused by a proposed intervention.
 7. Clip to the approved boundary, retaining a boundary buffer during processing
    to avoid edge artefacts.
 8. Derive per-scene indicators and multi-scene seasonal summaries.
-9. Export indicators with units, valid-pixel counts, observation dates and
-   processing configuration.
+9. Summarise valid raster pixels by ward or planning area and retain coverage
+   diagnostics alongside every statistic.
 10. Review maps and summary statistics before using any indicator in a decision
     model.
 
