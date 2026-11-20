@@ -103,6 +103,138 @@ def population_in_area(
     return estimate
 
 
+@dataclass(frozen=True, slots=True)
+class AreaPopulationEstimate:
+    """Population summary for one feature in a WorldPop batch response."""
+
+    area_id: str
+    name: str
+    area_km2: float
+    total_population: float
+    population_density: float
+    share_of_total: float
+    rank: int
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass(frozen=True, slots=True)
+class PopulationBatch:
+    """Auditable population summary for a set of planning areas."""
+
+    data_year: int
+    total_population: float
+    area_km2: float
+    areas: tuple[AreaPopulationEstimate, ...]
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+def population_by_areas(
+    features: dict[str, Any],
+    *,
+    year: int,
+    endpoint: str = DEFAULT_WORLDPOP_API,
+    timeout_seconds: float = 60.0,
+) -> PopulationBatch:
+    """Query the WorldPop batch endpoint for up to 1,000 WGS84 polygons."""
+    if year not in SUPPORTED_YEARS:
+        raise ValueError("WorldPop Global2 R2025A supports years 2015 through 2030")
+    if timeout_seconds <= 0:
+        raise ValueError("timeout_seconds must be positive")
+    if features.get("type") != "FeatureCollection":
+        raise ValueError("features must be a GeoJSON FeatureCollection")
+    feature_list = features.get("features")
+    if not isinstance(feature_list, list) or not 1 <= len(feature_list) <= 1000:
+        raise ValueError("FeatureCollection must contain between 1 and 1,000 areas")
+
+    identifiers: set[str] = set()
+    for feature in feature_list:
+        if not isinstance(feature, dict) or feature.get("type") != "Feature":
+            raise ValueError("Each area must be a GeoJSON Feature")
+        properties = feature.get("properties") or {}
+        area_id = feature.get("id", properties.get("id"))
+        if area_id is None or not str(area_id).strip():
+            raise ValueError("Each area must have a stable feature id or properties.id")
+        identifier = str(area_id)
+        if identifier in identifiers:
+            raise ValueError(f"Duplicate area id: {identifier}")
+        identifiers.add(identifier)
+        geometry = feature.get("geometry")
+        if not isinstance(geometry, dict):
+            raise ValueError(f"Area {identifier} has no geometry")
+        _validate_geometry(geometry)
+
+    payload = json.dumps({"features": features, "year": year}).encode("utf-8")
+    request = Request(
+        f"{endpoint.rstrip('/')}/batch",
+        data=payload,
+        headers={"Content-Type": "application/json", "Accept": "application/json"},
+        method="POST",
+    )
+    try:
+        with urlopen(request, timeout=timeout_seconds) as response:
+            result = json.loads(response.read().decode("utf-8"))
+    except HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace")
+        raise RuntimeError(f"WorldPop API returned HTTP {exc.code}: {detail}") from exc
+    except URLError as exc:
+        raise RuntimeError(f"Unable to reach WorldPop API: {exc.reason}") from exc
+    except (TimeoutError, OSError) as exc:
+        raise RuntimeError(f"WorldPop API request failed: {exc}") from exc
+
+    if not isinstance(result, dict):
+        raise ValueError("WorldPop batch API returned an unexpected response")
+    if "error" in result:
+        raise RuntimeError(f"WorldPop API error: {result.get('message', result['error'])}")
+    if result.get("data_year") != year:
+        raise ValueError(
+            f"WorldPop returned year {result.get('data_year')}, but year {year} was requested"
+        )
+    total = result.get("total")
+    response_areas = result.get("features")
+    if not isinstance(total, dict) or not isinstance(response_areas, list):
+        raise ValueError("WorldPop batch response is missing total or features")
+    if len(response_areas) != len(feature_list):
+        raise ValueError("WorldPop batch response count does not match submitted areas")
+    try:
+        total_population = float(total["total_population"])
+        total_area = float(total["area_km2"])
+        areas = tuple(
+            AreaPopulationEstimate(
+                area_id=str(item["id"]),
+                name=str(item["name"]),
+                area_km2=float(item["area_km2"]),
+                total_population=float(item["total_population"]),
+                population_density=float(item["population_density"]),
+                share_of_total=float(item["share_of_total"]),
+                rank=int(item["rank"]),
+            )
+            for item in response_areas
+        )
+    except (KeyError, TypeError, ValueError) as exc:
+        raise ValueError("WorldPop batch response contains invalid area values") from exc
+
+    if {area.area_id for area in areas} != identifiers:
+        raise ValueError("WorldPop batch response IDs do not match submitted area IDs")
+    if (
+        total_population < 0
+        or total_area <= 0
+        or any(
+            area.area_km2 <= 0
+            or area.total_population < 0
+            or area.population_density < 0
+            or not 0 <= area.share_of_total <= 1
+            or area.rank < 1
+            for area in areas
+        )
+    ):
+        raise ValueError("WorldPop batch response contains invalid population values")
+    return PopulationBatch(year, total_population, total_area, areas)
+
+
 def _validate_geometry(geometry: dict[str, Any]) -> None:
     if geometry.get("type") not in {"Polygon", "MultiPolygon"}:
         raise ValueError("geometry must be a GeoJSON Polygon or MultiPolygon")
