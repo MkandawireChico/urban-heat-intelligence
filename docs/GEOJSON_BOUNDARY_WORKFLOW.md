@@ -1,29 +1,68 @@
 # Boundary intake and validation
 
-The project does not yet select an authoritative Blantyre planning boundary.
-The city council boundary, district boundary, planning-area boundaries and
-functional urban extent are different concepts. Obtain the intended study
-boundary from its custodian and record the exact version and licence.
+## Provisional Blantyre study boundary
 
-## Intake checklist
+The project will use the World Bank Malawi City Extents Blantyre City layer as a provisional geometry for pipeline development and initial spatial screening. The user approved this use on 2026-11-20.
 
-1. Preserve the original file unchanged under `data/raw/` or `data/boundaries/`.
-2. Record the provider, source URL, retrieval date, licence, version, coordinate
-   reference system and any stated administrative level.
-3. Confirm whether the file describes Blantyre City, Blantyre District or another
-   planning geography. Do not infer this from the filename.
-4. Convert a working copy to RFC 7946 GeoJSON using WGS84 longitude/latitude.
-5. Run `heatadapt-validate boundary path/to/boundary.geojson`.
-6. Review the reported bounds and feature count against the source metadata and
-   a trusted map. Structural validation does not prove legal authority, positional
-   accuracy, topology, completeness or suitability for planning.
-7. Keep the validation report with the data version. Do not publish rankings until
-   the study boundary and analysis units have been approved.
+- Dataset page: https://datacatalog.worldbank.org/search/dataset/0042046/malawi-city-extents
+- Direct archive: https://datacatalogfiles.worldbank.org/ddh-published/0042046/1/DR0052566/mwi_blantyrecity.zip
+- Source layer last updated: 2018-02-24
+- Licence: Creative Commons Attribution 4.0 International
+- Attribution: World Bank. Malawi City Extents. Blantyre City shapefile, last updated 24 February 2018. Licensed under CC BY 4.0.
+
+This is not treated as a current legally authoritative city or planning boundary. Keep proposed extension areas separate. Compare the geometry with current Blantyre City Council and National Spatial Data Centre records before policy-facing publication.
+
+The archive has been identified, but has not yet been retrieved or validated in this repository. Download the ZIP archive manually from the direct archive link and save it as:
+
+`data/boundaries/world_bank/blantyre_city_2018.zip`
+
+Record retrieval date and SHA-256. Keep the original archive unchanged. Do not commit the archive until file contents and redistribution requirements have been checked.
+
+## Inspect and convert the source
+
+Install the optional geospatial dependencies:
+
+```bash
+python -m pip install -e ".[geo]"
+```
+
+List the layers in the archive:
+
+```bash
+heatadapt-prepare-boundary data/boundaries/world_bank/blantyre_city_2018.zip --list-layers
+```
+
+Inspect the layer names and attributes. Select the city boundary and ward layer explicitly. Do not assume the city outline is the same layer as wards.
+
+Convert the selected city layer:
+
+```bash
+heatadapt-prepare-boundary data/boundaries/world_bank/blantyre_city_2018.zip \
+  --layer "EXACT_LAYER_NAME" \
+  --output data/boundaries/processed/blantyre_city_2018.geojson
+```
+
+The converter refuses missing CRS, null or empty geometries, invalid polygons and non-polygon layers. It reprojects to WGS84 longitude/latitude, preserves feature attributes, and runs the project's GeoJSON structural validator. It does not repair invalid geometries or guess a missing CRS.
+
+Keep ward polygons in a separate GeoJSON file using the same process. Preserve ward IDs and names for disaggregated analysis.
+
+Validate the output:
+
+```bash
+heatadapt-validate boundary data/boundaries/processed/blantyre_city_2018.geojson
+```
+
+Review feature count, geometry types and bounds against the source metadata and a trusted map. Structural validation does not prove legal authority, positional accuracy, topology, completeness or suitability for planning.
+
+## General intake checklist
+
+1. Preserve the original source unchanged.
+2. Record provider, URL, retrieval date, licence, version, CRS and administrative level.
+3. Confirm the geography represents Blantyre City, not Blantyre District or a different planning extent.
+4. Preserve city outline and ward polygons as separate layers.
+5. Keep validation reports with each data version.
+6. Do not publish rankings until study geography and analysis units have been reviewed.
 
 ## Catalogue validation
 
-Run `heatadapt-validate catalogue data/catalogue.json` to check required
-provenance fields, HTTPS source links, supported status values and unique IDs.
-
-The validator intentionally avoids downloading data. Dataset access, terms of use,
-attribution and redistribution permission must be checked before retrieval.
+Run `heatadapt-validate catalogue data/catalogue.json` to check provenance fields, HTTPS source links, supported status values and unique IDs.
