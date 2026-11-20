@@ -8,7 +8,7 @@ from typing import Any
 
 from pystac_client import Client
 
-DEFAULT_STAC_ENDPOINT = "https://stac.dataspace.copernicus.eu/v1"
+DEFAULT_STAC_ENDPOINT = "https://planetarycomputer.microsoft.com/api/stac/v1"
 
 
 @dataclass(frozen=True, slots=True)
