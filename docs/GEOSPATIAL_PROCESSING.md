@@ -145,3 +145,45 @@ credentials, tokens or downloaded source imagery to the repository.
 
 The project does not yet claim to have downloaded, processed or validated
 Blantyre scenes or population rasters.
+
+
+## Multi-scene indicator composites
+
+`heatadapt.composite.median_composite` creates a per-pixel median from two or
+more already quality-masked, single-band GeoTIFFs. All inputs must have the
+same dimensions, CRS and affine transform, and each must declare nodata.
+The function writes two outputs:
+
+- A float32 median raster, with pixels lacking valid observations marked nodata.
+- A uint16 valid-observation count raster, showing how many input scenes
+  contributed to each pixel.
+
+The observation-count layer is essential context. A median based on one clear
+observation is not equivalent in support to a median based on ten. Inspect
+counts and spatial coverage before comparing areas.
+
+The function does not harmonise different sensors, resample grids, choose
+seasons, apply QA flags, or correct differences in acquisition time and
+atmospheric conditions. Select comparable scenes and quality-mask them before
+compositing. A multi-scene median is a temporal summary of the supplied
+observations, not a daily maximum, heatwave statistic, air-temperature
+estimate or measure of personal exposure.
+
+Example:
+
+```python
+from heatadapt.composite import median_composite
+
+median_composite(
+    [
+        "data/interim/scene_2025_10_03_lst.tif",
+        "data/interim/scene_2025_10_19_lst.tif",
+        "data/interim/scene_2025_11_04_lst.tif",
+    ],
+    "data/processed/seasonal_lst_median.tif",
+    "data/processed/seasonal_lst_observation_count.tif",
+)
+```
+
+Only combine scenes after verifying their seasonal relevance, sensor
+compatibility, QA masks, spatial grid and acquisition metadata.
