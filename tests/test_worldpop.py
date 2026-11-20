@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import io
 import json
-from urllib import error, request
+from urllib import error as urllib_error, request
 
 import pytest
 
@@ -90,7 +90,7 @@ def test_rejects_mismatched_year_returned_by_api(monkeypatch):
 
 
 def test_reports_api_error_response(monkeypatch):
-    error = error.HTTPError(
+    api_error = urllib_error.HTTPError(
         "https://api.worldpop.org/v3/population",
         503,
         "Unavailable",
@@ -99,7 +99,7 @@ def test_reports_api_error_response(monkeypatch):
     )
 
     def fake_urlopen(_request: urllib.request.Request, timeout: float = 60.0):
-        raise error
+        raise api_error
 
     monkeypatch.setattr("heatadapt.worldpop.urlopen", fake_urlopen)
     with pytest.raises(RuntimeError, match="No data"):
@@ -108,7 +108,7 @@ def test_reports_api_error_response(monkeypatch):
 
 def test_reports_network_errors(monkeypatch):
     def fake_urlopen(_request: urllib.request.Request, timeout: float = 60.0):
-        raise error.URLError("offline")
+        raise urllib_error.URLError("offline")
 
     monkeypatch.setattr("heatadapt.worldpop.urlopen", fake_urlopen)
     with pytest.raises(RuntimeError, match="Unable to reach"):
