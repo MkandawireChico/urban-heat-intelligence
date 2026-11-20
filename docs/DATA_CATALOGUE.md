@@ -14,7 +14,8 @@ This catalogue records candidate datasets before ingestion. Inclusion does not m
 | Population cross-check | GHSL population grids and WorldPop 1 km Global2 product, where suitable | Product- and epoch-dependent | Independent sensitivity analysis | Confirm the exact release, epoch, resolution and licence before selection. Do not mix products without documenting methodological differences. |
 | Built environment | Copernicus Global Human Settlement Layer (GHSL) | Multiple products, epochs and resolutions, including population, built-up surface/volume and building attributes | Built-up intensity and settlement context; cross-check against local mapping | Product-specific resolutions and epochs differ. Select exact product and epoch; cite European Commission and check reuse conditions. |
 | Buildings, roads and amenities | OpenStreetMap Malawi extract via Geofabrik | Country-wide vector extract; PBF, Shapefile and GeoPackage options | Building footprints, road network, mapped facilities, green spaces and other tagged features | Completeness varies by place and feature. Absence from OSM is not evidence of absence on the ground. ODbL attribution and share-alike obligations apply. Record extract date and tags used. |
-| Administrative boundaries | National Geospatial Information Authority / National Spatial Data Centre, distributed through UN SALB | Validated administrative-unit polygons; temporal validity listed through 2022-10-27 | Candidate official administrative framework and boundary cross-check | Confirm the exact administrative level, current legal status, metadata and permitted reuse. A district boundary is not interchangeable with a city or planning boundary. |\n| City and ward boundaries | World Bank Malawi City Extents | Blantyre City polygon and ward polygons; underlying Blantyre file last updated 2018-02-24 | Candidate city study extent and ward-level aggregation, pending comparison with current national boundaries | Public CC BY 4.0, but the file is dated. Treat as a candidate only, not a current legal boundary, until confirmed with the national custodian or Blantyre City Council. |
+| Administrative boundaries | National Geospatial Information Authority / National Spatial Data Centre, distributed through UN SALB | Validated administrative-unit polygons; temporal validity listed through 2022-10-27 | Candidate official administrative framework and boundary cross-check | Confirm the exact administrative level, current legal status, metadata and permitted reuse. A district boundary is not interchangeable with a city or planning boundary. |
+| City and ward boundaries | World Bank Malawi City Extents | Blantyre City polygon and ward polygons; underlying Blantyre file last updated 2018-02-24 | Candidate city study extent and ward-level aggregation, pending comparison with current national boundaries | Public CC BY 4.0, but the file is dated. Treat as a candidate only, not a current legal boundary, until confirmed with the national custodian or Blantyre City Council. |
 | Weather context | Copernicus ERA5-Land | Historical land reanalysis; approximately 9 km grid, hourly time series | Regional meteorological context and temporal comparison | Too coarse to resolve neighbourhood heat differences in Blantyre. Reanalysis is not a local station observation. Use as contextual data, not street-level exposure. |
 
 ## Source links and attribution
@@ -56,10 +57,12 @@ analysis should use the current legally recognised city boundary. Proposed
 extension areas should be a separate future-planning scenario if the Council
 confirms their status and provides usable geometry.
 
-The World Bank Malawi City Extents dataset is a useful candidate because it
-includes Blantyre City and ward polygons, but its Blantyre file dates to 2018.
-Compare it with the boundary and ward data held by Blantyre City Council and
-the National Spatial Data Centre before adopting it. Blantyre City Council's
+The World Bank Malawi City Extents archive supplied for this project contains
+26 Blantyre ward polygons and dates to 2018. The project has validated the
+polygon structures and derived a provisional city outline by dissolving the
+wards. The archive does not contain a separate city-outline feature. Compare
+the processed geometry with current boundary and ward data held by Blantyre
+City Council and the National Spatial Data Centre before adopting it. Blantyre City Council's
 planning page also states that the Council holds a city-wide GIS database and
 provides geospatial information for planning purposes.
 
@@ -88,7 +91,7 @@ Every local value must have a source, date, geographic scope and confidence note
 
 ## Initial ingestion order
 
-1. Acquire and inspect the authoritative study boundary and compare it with OSM and GHSL settlement extents.
+1. Compare the provisional 2018 ward-derived city extent with current Blantyre City Council and National Spatial Data Centre records; obtain an authoritative study boundary before policy-facing analysis.
 2. Download a dated Malawi OSM extract and clip it only after the study boundary is agreed.
 3. Inspect WorldPop 3 arc-second and GHSL population/built-up products; select one primary population layer and retain the other as a sensitivity check.
 4. Select a consistent set of cloud-screened Landsat scenes across relevant seasons and years.
