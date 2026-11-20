@@ -116,7 +116,6 @@ def test_reports_network_errors(monkeypatch):
         population_in_area(POLYGON, year=2025)
 
 
-
 def _batch_features():
     return {
         "type": "FeatureCollection",
