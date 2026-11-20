@@ -99,12 +99,12 @@
     "dataset_id": "world-bank-malawi-city-extents",
     "title": "Malawi City Extents including Blantyre City and wards",
     "provider": "World Bank Data Catalog",
-    "source_url": "https://datacatalog.worldbank.org/search/dataset/0042046/malawi-city-extents",
+    "source_url": "https://datacatalogfiles.worldbank.org/ddh-published/0042046/1/DR0052566/mwi_blantyrecity.zip",
     "licence": "Creative Commons Attribution 4.0",
     "spatial_resolution": "City extent and ward polygon shapefiles",
     "temporal_coverage": "Blantyre City shapefile last updated 2018-02-24; catalogue metadata updated 2023-01-19",
-    "intended_use": "Candidate study boundary and ward-level spatial aggregation, subject to comparison with current authoritative boundaries",
-    "limitations": "The underlying Blantyre City file dates to 2018. Do not treat this dataset as a current legal boundary without confirmation from the national custodian or Blantyre City Council.",
+    "intended_use": "Approved provisional geometry for pipeline development, map extent tests and initial Blantyre city screening; not a current legal or planning boundary",
+    "limitations": "Blantyre City shapefile last updated 2018-02-24. User approved provisional use on 2026-11-20. Confirm geometry attributes, CRS, validity, completeness and current status against Blantyre City Council and National Spatial Data Centre before publishing policy conclusions. Do not include proposed extension areas unless supplied and approved separately.",
     "status": "assessed"
   }
 ]
