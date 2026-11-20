@@ -351,3 +351,21 @@ The WorldPop surface is modelled population, not a census enumeration or a
 measurement of daytime presence. The provisional 2018 boundary also limits
 the geographic interpretation. Do not infer individual-level exposure from
 the raster.
+
+
+After downloading, inspect the raster before using it in analysis:
+
+```python
+from heatadapt.raster import inspect_worldpop_population_raster
+
+report = inspect_worldpop_population_raster(
+    "data/processed/worldpop_blantyre_2025_100m.tif",
+    expected_total_population=None,
+)
+print(report)
+```
+
+Set `expected_total_population` to the API's `X-Total-Population` response
+header when comparing the valid-cell sum with the API summary. Keep the
+reported difference in the analysis record. Do not silently adjust cell values
+to force a match.
