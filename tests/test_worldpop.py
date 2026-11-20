@@ -76,7 +76,7 @@ def test_rejects_non_polygon_geometry():
 
 
 def test_rejects_mismatched_year_returned_by_api():
-    with patch(
+    with unittest.mock.patch(
         "heatadapt.worldpop.urlopen",
         return_value=_Response(_payload(data_year=2024)),
     ):
@@ -92,12 +92,12 @@ def test_reports_api_error_response():
         {},
         io.BytesIO(b'{"error":"data_unavailable","message":"No data"}'),
     )
-    with patch("heatadapt.worldpop.urlopen", side_effect=error):
+    with unittest.mock.patch("heatadapt.worldpop.urlopen", side_effect=error):
         with pytest.raises(RuntimeError, match="No data"):
             population_in_area(POLYGON, year=2025)
 
 
 def test_reports_network_errors():
-    with patch("heatadapt.worldpop.urlopen", side_effect=urllib.error.URLError("offline")):
+    with unittest.mock.patch("heatadapt.worldpop.urlopen", side_effect=urllib.error.URLError("offline")):
         with pytest.raises(RuntimeError, match="Unable to reach"):
             population_in_area(POLYGON, year=2025)
