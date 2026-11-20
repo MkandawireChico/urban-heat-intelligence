@@ -22,7 +22,7 @@ Satellite land-surface temperature is not the same as air temperature, indoor te
 
 ## Project status
 
-Geospatial foundation in progress. The repository includes dataset and boundary validation, Landsat Collection 2 temperature conversion, GeoTIFF processing with QA masks, NDVI helpers, STAC scene discovery, boundary preparation, and per-area raster summaries with valid-pixel coverage diagnostics. The World Bank Blantyre boundary is approved as a provisional input, but its archive has not yet been retrieved or validated. No Blantyre imagery or population raster has yet been downloaded or validated.
+Geospatial foundation in progress. The repository includes dataset and boundary validation, Landsat Collection 2 temperature conversion, GeoTIFF processing with QA masks, NDVI helpers, STAC scene discovery, boundary preparation, per-area raster summaries with valid-pixel coverage diagnostics, and aligned multi-scene median composites with observation-count rasters. The World Bank Blantyre boundary is approved as a provisional input, but its archive has not yet been retrieved or validated. No Blantyre imagery or population raster has yet been downloaded or validated.
 
 ## Repository guide
 
