@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import io
 import json
-import urllib.error
-import urllib.request
+from urllib import error, request
 
 import pytest
 
@@ -43,7 +42,7 @@ def _payload(**overrides):
 
 
 def test_queries_worldpop_and_returns_provenance(monkeypatch):
-    captured: list[urllib.request.Request] = []
+    captured: list[request.Request] = []
 
     def fake_urlopen(request: urllib.request.Request, timeout: float = 60.0):
         captured.append(request)
@@ -91,7 +90,7 @@ def test_rejects_mismatched_year_returned_by_api(monkeypatch):
 
 
 def test_reports_api_error_response(monkeypatch):
-    error = urllib.error.HTTPError(
+    error = error.HTTPError(
         "https://api.worldpop.org/v3/population",
         503,
         "Unavailable",
@@ -109,7 +108,7 @@ def test_reports_api_error_response(monkeypatch):
 
 def test_reports_network_errors(monkeypatch):
     def fake_urlopen(_request: urllib.request.Request, timeout: float = 60.0):
-        raise urllib.error.URLError("offline")
+        raise error.URLError("offline")
 
     monkeypatch.setattr("heatadapt.worldpop.urlopen", fake_urlopen)
     with pytest.raises(RuntimeError, match="Unable to reach"):
