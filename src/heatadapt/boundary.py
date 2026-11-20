@@ -70,7 +70,7 @@ def main() -> None:
     parser.add_argument("--output", help="Destination GeoJSON path")
     args = parser.parse_args()
 
-    import geopandas as gpd  # type: ignore[import-untyped]
+    import geopandas as gpd
 
     if args.list_layers:
         for name in gpd.list_layers(args.source)["name"].tolist():
