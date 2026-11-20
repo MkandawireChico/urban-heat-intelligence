@@ -34,7 +34,7 @@ def landsat_surface_temperature_celsius(
         raise ValueError("qa_radsat must have the same length as digital_numbers")
 
     output: list[float | None] = []
-    for index, (digital_number, qa_value) in enumerate(zip(digital_numbers, qa_pixel)):
+    for index, (digital_number, qa_value) in enumerate(zip(digital_numbers, qa_pixel, strict=True)):
         if digital_number < 0 or qa_value < 0:
             raise ValueError("Raster values must be non-negative integers")
         invalid = (
@@ -67,7 +67,7 @@ def normalized_difference(
     if len(band_a) != len(band_b):
         raise ValueError("band_a and band_b must have equal lengths")
     output: list[float | None] = []
-    for first, second in zip(band_a, band_b):
+    for first, second in zip(band_a, band_b, strict=True):
         denominator = first + second
         if denominator == 0:
             output.append(None)
