@@ -56,7 +56,7 @@ def test_search_stac_scenes_returns_auditable_metadata(monkeypatch):
     assert len(scenes) == 1
     assert scenes[0].item_id == "S2A_TEST_SCENE"
     assert scenes[0].cloud_cover_percent == 7.5
-    assert scenes[0].assets == {"B04": "https://example.test/B04.jp2"}
+    assert scenes[0].assets == {\n        "B04": "https://example.test/B04.jp2",\n        "thumbnail": "https://example.test/preview.jpg",\n    }
     assert catalog.arguments is not None
     assert catalog.arguments["collections"] == ["sentinel-2-l2a"]
     assert catalog.arguments["max_items"] == 25
