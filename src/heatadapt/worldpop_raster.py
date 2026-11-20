@@ -142,7 +142,10 @@ def download_population_raster(
             "Modelled people-per-cell estimates, not census counts. "
             "EPSG:4326 source grid retained without resampling."
         ),
-        "nodata": "WorldPop documentation specifies -99999 outside the area and where data has no value; zero means no modelled residents.",
+        "nodata": (
+            "WorldPop documentation specifies -99999 outside the area and where "
+            "data has no value; zero means no modelled residents."
+        ),
     }
 
     raster_temp: str | None = None
