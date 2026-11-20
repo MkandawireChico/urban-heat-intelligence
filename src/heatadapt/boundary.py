@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
 from typing import Any
 
@@ -34,7 +35,7 @@ def convert_boundary_archive(
     layer: str,
 ) -> dict[str, object]:
     """Convert one explicitly selected vector layer from an archive to GeoJSON."""
-    import geopandas as gpd
+    import geopandas as gpd  # type: ignore[import-untyped]
 
     source_path = Path(source)
     output_path = Path(output)
@@ -77,8 +78,6 @@ def main() -> None:
         return
     if not args.layer or not args.output:
         parser.error("--layer and --output are required unless --list-layers is used")
-    import json
-
     print(json.dumps(convert_boundary_archive(args.source, args.output, args.layer), indent=2))
 
 
