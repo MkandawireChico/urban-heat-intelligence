@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import io
 import json
-from urllib import error as urllib_error, request
+from urllib import error as urllib_error
+from urllib import request
 
 import pytest
 
@@ -44,7 +45,7 @@ def _payload(**overrides):
 def test_queries_worldpop_and_returns_provenance(monkeypatch):
     captured: list[request.Request] = []
 
-    def fake_urlopen(request: urllib.request.Request, timeout: float = 60.0):
+    def fake_urlopen(request: request.Request, timeout: float = 60.0):
         captured.append(request)
         return _Response(_payload())
 
@@ -81,7 +82,7 @@ def test_rejects_non_polygon_geometry():
 
 
 def test_rejects_mismatched_year_returned_by_api(monkeypatch):
-    def fake_urlopen(_request: urllib.request.Request, timeout: float = 60.0):
+    def fake_urlopen(_request: request.Request, timeout: float = 60.0):
         return _Response(_payload(data_year=2024))
 
     monkeypatch.setattr("heatadapt.worldpop.urlopen", fake_urlopen)
@@ -98,7 +99,7 @@ def test_reports_api_error_response(monkeypatch):
         io.BytesIO(b'{"error":"data_unavailable","message":"No data"}'),
     )
 
-    def fake_urlopen(_request: urllib.request.Request, timeout: float = 60.0):
+    def fake_urlopen(_request: request.Request, timeout: float = 60.0):
         raise api_error
 
     monkeypatch.setattr("heatadapt.worldpop.urlopen", fake_urlopen)
@@ -107,7 +108,7 @@ def test_reports_api_error_response(monkeypatch):
 
 
 def test_reports_network_errors(monkeypatch):
-    def fake_urlopen(_request: urllib.request.Request, timeout: float = 60.0):
+    def fake_urlopen(_request: request.Request, timeout: float = 60.0):
         raise urllib_error.URLError("offline")
 
     monkeypatch.setattr("heatadapt.worldpop.urlopen", fake_urlopen)
@@ -166,7 +167,7 @@ def _batch_payload():
 def test_batch_queries_all_areas_and_preserves_ids(monkeypatch):
     captured: list[request.Request] = []
 
-    def fake_urlopen(req: urllib.request.Request, timeout: float = 60.0):
+    def fake_urlopen(req: request.Request, timeout: float = 60.0):
         captured.append(req)
         return _Response(_batch_payload())
 
@@ -213,7 +214,7 @@ def test_batch_rejects_mismatched_response_ids(monkeypatch):
     payload = _batch_payload()
     payload["features"][1]["id"] = "ward-03"
 
-    def fake_urlopen(req: urllib.request.Request, timeout: float = 60.0):
+    def fake_urlopen(req: request.Request, timeout: float = 60.0):
         return _Response(payload)
 
     monkeypatch.setattr("heatadapt.worldpop.urlopen", fake_urlopen)
