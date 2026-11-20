@@ -58,9 +58,8 @@ def median_composite(
 
     stack = np.ma.stack(arrays)
     counts = np.ma.count(stack, axis=0).astype(np.uint16)
-    median = np.ma.median(stack, axis=0).filled(OUTPUT_NODATA).astype(  # type: ignore[no-untyped-call]
-        np.float32
-    )
+    median_values = np.ma.median(stack, axis=0)  # type: ignore[no-untyped-call]
+    median = median_values.filled(OUTPUT_NODATA).astype(np.float32)
 
     profile = reference_profile.copy()
     profile.update(
