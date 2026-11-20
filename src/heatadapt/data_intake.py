@@ -156,7 +156,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                     {
                         "success": True,
                         "output": str(args.output),
-                        "metadata_output": str(args.output.with_suffix(args.output.suffix + ".json")),
+                        "metadata_output": str(
+                            args.output.with_suffix(args.output.suffix + ".json")
+                        ),
                         "file_bytes": result.file_bytes,
                         "file_sha256": result.file_sha256,
                         "total_population": result.total_population,
