@@ -14,6 +14,7 @@ from urllib.parse import urlsplit, urlunsplit
 
 from heatadapt.stac import DEFAULT_STAC_ENDPOINT, search_stac_scenes
 from heatadapt.worldpop import DEFAULT_WORLDPOP_API, population_by_areas
+from heatadapt.worldpop_raster import download_population_raster
 
 
 def _read_feature_collection(path: Path) -> tuple[dict[str, Any], str]:
@@ -107,6 +108,17 @@ def _parser() -> argparse.ArgumentParser:
     population.add_argument("--timeout", type=float, default=60.0)
     population.add_argument("--force", action="store_true")
 
+    raster = subparsers.add_parser(
+        "worldpop-raster", help="Download a clipped WorldPop people-per-cell GeoTIFF"
+    )
+    raster.add_argument("--boundary", required=True, type=Path)
+    raster.add_argument("--year", required=True, type=int)
+    raster.add_argument("--output", required=True, type=Path)
+    raster.add_argument("--resolution", choices=("100m", "1km"), default="100m")
+    raster.add_argument("--endpoint", default=DEFAULT_WORLDPOP_API)
+    raster.add_argument("--timeout", type=float, default=120.0)
+    raster.add_argument("--force", action="store_true")
+
     landsat = subparsers.add_parser(
         "landsat", help="Discover Landsat Collection 2 Level-2 scenes without downloading"
     )
@@ -128,6 +140,31 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         collection, boundary_sha256 = _read_feature_collection(args.boundary)
         retrieved_at = datetime.now(UTC).isoformat()
+        if args.command == "worldpop-raster":
+            geometry = _single_geometry(collection)
+            result = download_population_raster(
+                geometry,
+                year=args.year,
+                output_path=args.output,
+                resolution=args.resolution,
+                endpoint=args.endpoint,
+                timeout_seconds=args.timeout,
+                force=args.force,
+            )
+            print(
+                json.dumps(
+                    {
+                        "success": True,
+                        "output": str(args.output),
+                        "metadata_output": str(args.output.with_suffix(args.output.suffix + ".json")),
+                        "file_bytes": result.file_bytes,
+                        "file_sha256": result.file_sha256,
+                        "total_population": result.total_population,
+                    },
+                    indent=2,
+                )
+            )
+            return 0
         if args.command == "worldpop":
             features = _population_features(
                 collection,
