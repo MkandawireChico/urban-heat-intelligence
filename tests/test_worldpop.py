@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import io
 import json
-from unittest.mock import patch
 from urllib.error import HTTPError, URLError
+from unittest.mock import patch
 
 import pytest
 
