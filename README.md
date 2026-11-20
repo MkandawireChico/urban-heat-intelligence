@@ -65,3 +65,31 @@ Validate a candidate WGS84 GeoJSON boundary with `heatadapt-validate boundary pa
 ## Licence
 
 MIT. See [LICENSE](LICENSE).
+
+
+### Blantyre data intake
+
+After extracting the supplied boundary package into `data/boundaries/`, run
+the following commands from the repository root when network access is
+available:
+
+```bash
+heatadapt-data-intake worldpop \
+  --boundary data/boundaries/processed/blantyre_wards_2018.geojson \
+  --year 2025 \
+  --output data/processed/worldpop_blantyre_wards_2025.json
+
+heatadapt-data-intake landsat \
+  --boundary data/boundaries/processed/blantyre_city_2018.geojson \
+  --start 2025-09-01 \
+  --end 2025-11-30 \
+  --max-cloud 20 \
+  --output data/interim/landsat_blantyre_2025_scenes.json
+```
+
+The first command retrieves modelled ward-level polygon aggregates from
+WorldPop. The second discovers Landsat scenes only; it does not download
+imagery. Both outputs record the boundary checksum and query provenance.
+See [the geospatial processing guide](docs/GEOSPATIAL_PROCESSING.md) for
+interpretation limits and next processing steps. No live query results are
+committed yet.
