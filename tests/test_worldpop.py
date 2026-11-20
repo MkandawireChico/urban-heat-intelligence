@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import io
 import json
-from unittest.mock import patch
-from urllib.error import HTTPError, URLError
+import unittest.mock
+import urllib.error
 
 import pytest
 
@@ -43,7 +43,7 @@ def _payload(**overrides):
 
 
 def test_queries_worldpop_and_returns_provenance():
-    with patch("heatadapt.worldpop.urlopen", return_value=_Response(_payload())) as mocked:
+    with unittest.mock.patch("heatadapt.worldpop.urlopen", return_value=_Response(_payload())) as mocked:
         result = population_in_area(POLYGON, year=2025)
 
     request = mocked.call_args.args[0]
@@ -85,7 +85,7 @@ def test_rejects_mismatched_year_returned_by_api():
 
 
 def test_reports_api_error_response():
-    error = HTTPError(
+    error = urllib.error.HTTPError(
         "https://api.worldpop.org/v3/population",
         503,
         "Unavailable",
@@ -98,6 +98,6 @@ def test_reports_api_error_response():
 
 
 def test_reports_network_errors():
-    with patch("heatadapt.worldpop.urlopen", side_effect=URLError("offline")):
+    with patch("heatadapt.worldpop.urlopen", side_effect=urllib.error.URLError("offline")):
         with pytest.raises(RuntimeError, match="Unable to reach"):
             population_in_area(POLYGON, year=2025)
