@@ -187,3 +187,45 @@ median_composite(
 
 Only combine scenes after verifying their seasonal relevance, sensor
 compatibility, QA masks, spatial grid and acquisition metadata.
+
+
+## WorldPop population queries
+
+`heatadapt.worldpop.population_in_area` queries the WorldPop Global2 R2025A
+API for a supplied WGS84 Polygon or MultiPolygon and year from 2015 through
+2030. It returns total modelled population, polygon area, population density,
+data year, source release and API processing time. The request is made over
+HTTPS and does not require an API key within the documented public limits.
+
+Example after installing the project:
+
+```python
+import geopandas as gpd
+from heatadapt.worldpop import population_in_area
+
+wards = gpd.read_file("data/boundaries/processed/blantyre_wards.geojson")
+ward = wards.iloc[0]
+estimate = population_in_area(
+    ward.geometry.__geo_interface__,
+    year=2025,
+)
+print(estimate.to_dict())
+```
+
+This endpoint returns a polygon aggregate. It does not download a population
+GeoTIFF or provide cell-level population values. Use the WorldPop country
+GeoTIFF files or a documented raster endpoint when cell-level overlays and
+population-weighted pixel analysis are required. Do not infer a ward-level
+population distribution from an aggregate total.
+
+WorldPop Global2 R2025A provides annual estimates for 2015–2030 at roughly
+100 m at the equator and is licensed CC BY 4.0. Values are modelled estimates,
+not census enumerations. Record the release, year, query geometry, returned
+area and source string. Check the current API catalogue and rate limits before
+large batch requests. A returned population density is the API's aggregate
+density for the supplied geometry; it is not a uniform within-polygon
+distribution.
+
+Source and citation:
+https://api.worldpop.org/v3/documentation
+https://hub.worldpop.org/doi/10.5258/SOTON/WP00839
