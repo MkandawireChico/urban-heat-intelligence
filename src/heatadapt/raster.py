@@ -130,3 +130,62 @@ def _require_matching_grid(
         or reference.crs != candidate.crs
     ):
         raise ValueError(f"{label} raster must match the ST raster grid and CRS")
+
+
+def inspect_worldpop_population_raster(
+    raster_path: str | Path,
+    *,
+    expected_total_population: float | None = None,
+) -> dict[str, int | float | str | None]:
+    """Inspect a WorldPop people-per-cell raster without changing its grid.
+
+    Nodata cells are excluded from population sums. Valid zero cells remain
+    valid observations and are counted separately. This function does not
+    reproject, resample, clip or infer population in missing cells.
+    """
+    with rasterio.open(raster_path) as source:
+        if source.count != 1:
+            raise ValueError("WorldPop population raster must contain one band")
+        if source.crs is None or source.crs.to_epsg() != 4326:
+            raise ValueError("WorldPop population raster must use EPSG:4326")
+        if source.nodata is None:
+            raise ValueError("WorldPop population raster must declare nodata")
+        if source.dtypes[0] not in {"float32", "float64"}:
+            raise ValueError("WorldPop population raster must use a floating-point dtype")
+
+        values = source.read(1, masked=True).astype(np.float64)
+        data = np.asarray(values.data)
+        masked = np.ma.getmaskarray(values) | ~np.isfinite(data)
+        valid = ~masked
+        valid_values = data[valid]
+        if np.any(valid_values < 0):
+            raise ValueError("WorldPop valid cells contain negative population values")
+
+        population_sum = float(valid_values.sum(dtype=np.float64))
+        valid_count = int(valid.sum())
+        total_count = int(data.size)
+        zero_count = int(np.count_nonzero(valid_values == 0))
+        result: dict[str, int | float | str | None] = {
+            "path": str(raster_path),
+            "crs": source.crs.to_string(),
+            "width": int(source.width),
+            "height": int(source.height),
+            "pixel_count": total_count,
+            "valid_pixel_count": valid_count,
+            "nodata_or_nonfinite_pixel_count": total_count - valid_count,
+            "valid_pixel_fraction": valid_count / total_count if total_count else 0.0,
+            "zero_population_pixel_count": zero_count,
+            "nodata_value": float(source.nodata),
+            "population_sum_people": population_sum,
+            "minimum_valid_cell_people": float(valid_values.min()) if valid_count else None,
+            "maximum_valid_cell_people": float(valid_values.max()) if valid_count else None,
+            "expected_total_population_people": expected_total_population,
+            "difference_from_expected_people": (
+                population_sum - expected_total_population
+                if expected_total_population is not None
+                else None
+            ),
+        }
+        if expected_total_population is not None and expected_total_population < 0:
+            raise ValueError("expected_total_population must not be negative")
+        return result
