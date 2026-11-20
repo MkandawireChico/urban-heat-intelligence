@@ -1,7 +1,17 @@
 # Blantyre boundary data
 
-The World Bank Malawi City Extents Blantyre City layer is approved as a provisional input for pipeline development and initial spatial screening. It is not treated as a current legally authoritative boundary.
+The user supplied the World Bank Malawi City Extents Blantyre archive, approved for provisional pipeline development and initial spatial screening. The archive is dated 2018 and is not treated as a current legally authoritative boundary.
 
-The source archive, retrieval status, licence, intended use and validation requirements are recorded in `world_bank/blantyre_city_2018.json`. Download the original archive from the recorded source URL and place it at `world_bank/blantyre_city_2018.zip`. Do not commit the archive until its contents and redistribution implications have been reviewed.
+The archive contains one polygon layer, `MWI_BlantyreCity`, with 26 ward polygons in EPSG:32736. It does not contain a separate city-outline feature. The delivered city outline is a dissolved union of the 26 wards. The ward layer remains separate so ward IDs and names are retained.
 
-Keep the city outline and ward polygons as separate layers. Never dissolve away ward identifiers needed for neighbourhood-level analysis. Store the unchanged source archive separately from processed GeoJSON outputs.
+Source provenance, SHA-256, licence, feature counts, processing summary and limitations are recorded in `world_bank/blantyre_city_2018.json`. The user-facing processed package includes:
+- `blantyre_wards_2018.geojson` (26 ward polygons, EPSG:4326)
+- `blantyre_city_2018.geojson` (derived city outline, EPSG:4326)
+- `blantyre_boundaries_2018.gpkg` (wards and city_boundary layers, EPSG:32736)
+- `BOUNDARY_QA_REPORT.json`
+
+The source `TOTAL` field is zero for every feature. Do not interpret it as population. Use `TA_NAME` for ward display names; preserve all original attributes for provenance.
+
+Attribution: World Bank. Malawi City Extents. Blantyre City shapefile, last updated 24 February 2018. Licensed under CC BY 4.0.
+
+Structural geometry checks passed. This does not establish legal authority, completeness, positional accuracy, or absence of gaps. Compare with current Blantyre City Council and National Spatial Data Centre records before policy-facing use.
