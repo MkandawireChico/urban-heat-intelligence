@@ -7,7 +7,7 @@ import hashlib
 import json
 import sys
 from collections.abc import Sequence
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit, urlunsplit
@@ -159,7 +159,14 @@ def main(argv: Sequence[str] | None = None) -> int:
             }
         else:
             geometry = _single_geometry(collection)
-            datetime_range = f"{args.start}T00:00:00Z/{args.end}T23:59:59Z"
+            try:
+                start_date = date.fromisoformat(args.start)
+                end_date = date.fromisoformat(args.end)
+            except ValueError as exc:
+                raise ValueError("Start and end dates must use YYYY-MM-DD format") from exc
+            if end_date < start_date:
+                raise ValueError("End date must not be earlier than start date")
+            datetime_range = f"{start_date.isoformat()}T00:00:00Z/{end_date.isoformat()}T23:59:59Z"
             scenes = search_stac_scenes(
                 collection_ids=[args.collection],
                 intersects=geometry,
