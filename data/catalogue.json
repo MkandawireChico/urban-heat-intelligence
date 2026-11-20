@@ -82,5 +82,29 @@
     "intended_use": "Regional meteorological context and seasonal background, not neighbourhood-scale temperature mapping",
     "limitations": "Grid spacing is too coarse to resolve street-level urban heat variation. Reanalysis values are model-based estimates, not local station observations.",
     "status": "planned"
+  },
+  {
+    "dataset_id": "malawi-salb-administrative-units",
+    "title": "Malawi validated administrative units polygons",
+    "provider": "National Geospatial Information Authority, Surveys Department, National Spatial Data Centre; distributed through UN SALB",
+    "source_url": "https://salb.un.org/en/data/mwi",
+    "licence": "Not stated in the catalogue record; confirm reuse and redistribution terms with the national custodian",
+    "spatial_resolution": "Administrative unit polygons; level and scale depend on the supplied layer",
+    "temporal_coverage": "Validated dataset temporal validity from 2002-08-22 to 2022-10-27",
+    "intended_use": "Cross-check administrative hierarchy and candidate Blantyre city or district boundaries",
+    "limitations": "A validated administrative dataset is not automatically the correct planning boundary. Confirm the relevant unit, current legal status, coordinate reference system and custodian permissions before adoption.",
+    "status": "assessed"
+  },
+  {
+    "dataset_id": "world-bank-malawi-city-extents",
+    "title": "Malawi City Extents including Blantyre City and wards",
+    "provider": "World Bank Data Catalog",
+    "source_url": "https://datacatalog.worldbank.org/search/dataset/0042046/malawi-city-extents",
+    "licence": "Creative Commons Attribution 4.0",
+    "spatial_resolution": "City extent and ward polygon shapefiles",
+    "temporal_coverage": "Blantyre City shapefile last updated 2018-02-24; catalogue metadata updated 2023-01-19",
+    "intended_use": "Candidate study boundary and ward-level spatial aggregation, subject to comparison with current authoritative boundaries",
+    "limitations": "The underlying Blantyre City file dates to 2018. Do not treat this dataset as a current legal boundary without confirmation from the national custodian or Blantyre City Council.",
+    "status": "assessed"
   }
 ]
