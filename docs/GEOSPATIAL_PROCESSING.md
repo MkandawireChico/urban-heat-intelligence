@@ -264,3 +264,53 @@ distribution.
 Source and citation:
 https://api.worldpop.org/v3/documentation
 https://hub.worldpop.org/doi/10.5258/SOTON/WP00839
+
+
+## Reproducible data-intake commands
+
+Install the project with its geospatial dependencies:
+
+```bash
+python -m pip install -e ".[dev,geo]"
+```
+
+Extract the supplied Blantyre boundary package into `data/boundaries/`. The
+package should provide the 26-ward file and the dissolved city-outline file
+under `data/boundaries/processed/`.
+
+Retrieve 2025 WorldPop modelled population aggregates for all 26 wards:
+
+```bash
+heatadapt-data-intake worldpop \
+  --boundary data/boundaries/processed/blantyre_wards_2018.geojson \
+  --year 2025 \
+  --output data/processed/worldpop_blantyre_wards_2025.json
+```
+
+Discover Landsat Collection 2 Level-2 scenes intersecting the dissolved
+Blantyre city outline. The following is an initial dry-season to early
+rainy-season screening window, not a claim that any scene is suitable:
+
+```bash
+heatadapt-data-intake landsat \
+  --boundary data/boundaries/processed/blantyre_city_2018.geojson \
+  --start 2025-09-01 \
+  --end 2025-11-30 \
+  --max-cloud 20 \
+  --output data/interim/landsat_blantyre_2025_scenes.json
+```
+
+The command records the boundary file SHA-256, retrieval timestamp, request
+parameters and returned records. Existing output files are protected from
+accidental replacement. Pass `--force` only when intentionally replacing an
+earlier result. Asset query strings are removed from the saved STAC metadata
+to avoid persisting temporary access tokens.
+
+The WorldPop output contains polygon-level modelled aggregates. The Landsat
+command performs discovery only. It does not download or process imagery.
+Inspect scene dates, footprints, cloud cover, asset availability and pixel QA
+before selecting scenes for the temperature and vegetation pipelines. Do not
+treat scene-level cloud cover as pixel-level quality control.
+
+Both commands require network access from the machine running them. Keep the
+original boundary files and generated JSON outputs with the analysis record.
