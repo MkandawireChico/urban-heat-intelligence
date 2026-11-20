@@ -7,8 +7,8 @@ from typing import Any
 
 import numpy as np
 import rasterio  # type: ignore[import-untyped]
-from rasterio.features import geometry_mask
-from shapely.geometry import mapping
+from rasterio.features import geometry_mask  # type: ignore[import-untyped]
+from shapely.geometry import mapping  # type: ignore[import-untyped]
 
 
 def summarise_raster_by_area(
