@@ -1,29 +1,63 @@
 {
   "boundary_id": "blantyre-city-world-bank-2018-provisional",
-  "display_name": "Blantyre City boundary and wards",
+  "display_name": "Blantyre City provisional extent and 26 wards",
   "provider": "World Bank Data Catalog",
   "dataset": "Malawi City Extents, dataset 0042046",
   "source_page": "https://datacatalog.worldbank.org/search/dataset/0042046/malawi-city-extents",
   "download_url": "https://datacatalogfiles.worldbank.org/ddh-published/0042046/1/DR0052566/mwi_blantyrecity.zip",
   "licence": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
   "source_last_updated": "2018-02-24",
+  "source_shapefile_metadata_creation_date": "2016-12-15",
   "user_approval_date": "2026-11-20",
-  "use_status": "provisional_for_pipeline_development",
+  "source_archive_sha256": "8687565564d0516b1f77a9ce64c09ca5d260e6e952ee8a7b550ed66dbe8cebc7",
+  "source_archive_contents": {
+    "vector_layer": "MWI_BlantyreCity",
+    "feature_count": 26,
+    "geometry_type": "Polygon",
+    "source_crs": "EPSG:32736",
+    "fields": ["TA", "TA_NAME", "ID_", "NAME1_", "NAME2_", "NAME3_", "AREA", "CODE", "TOTAL"],
+    "separate_city_outline_feature": false
+  },
+  "use_status": "provisional_for_pipeline_development_and_initial_screening",
   "intended_use": [
     "pipeline tests",
     "initial city extent visualisation",
+    "ward-level aggregation",
     "provisional spatial screening"
   ],
   "prohibited_interpretations": [
     "current legally authoritative boundary",
     "current planning boundary without council confirmation",
     "Blantyre District boundary",
-    "future extension areas"
+    "future extension areas",
+    "population counts from the source TOTAL field"
   ],
   "attribution": "World Bank. Malawi City Extents. Blantyre City shapefile, last updated 24 February 2018. Licensed under CC BY 4.0.",
-  "local_file_expected": "data/boundaries/world_bank/blantyre_city_2018.zip",
-  "processed_file_expected": "data/boundaries/processed/blantyre_city_2018.geojson",
-  "retrieval_status": "source identified; archive not yet retrieved or validated",
-  "validation_status": "pending",
-  "notes": "Keep the original archive unchanged. Record retrieval date and SHA-256 after download. Inspect archive contents and select the city boundary and ward layers by attributes, not filename alone. Validate geometry, CRS, extent and feature attributes. Preserve ward polygons separately from the dissolved city outline."
+  "processed_outputs": {
+    "wards_geojson": "blantyre_wards_2018.geojson",
+    "city_outline_geojson": "blantyre_city_2018.geojson",
+    "geopackage": "blantyre_boundaries_2018.gpkg",
+    "delivery_package": "blantyre_boundary_package.zip",
+    "city_outline_method": "Dissolved union of all 26 ward polygons. The source archive did not supply a separate city-outline feature.",
+    "coordinate_reference_system_geojson": "EPSG:4326",
+    "coordinate_reference_system_geopackage": "EPSG:32736"
+  },
+  "retrieval_status": "user_supplied_archive_received_and_inspected",
+  "validation_status": "structural_geometry_checks_passed; legal_and_current_boundary_confirmation_pending",
+  "validation_summary": {
+    "valid_polygon_features": 26,
+    "null_or_empty_geometries": 0,
+    "unique_ward_names": 26,
+    "unique_source_ids": 26,
+    "positive_area_overlapping_ward_pairs": 0,
+    "dissolved_city_area_km2": 236.38,
+    "wgs84_bounds": [34.963576, -15.891652, 35.125586, -15.697246]
+  },
+  "known_data_quality_warnings": [
+    "The source TOTAL field is 0 for all 26 features and is not population data.",
+    "Some NAME3_ values contain spelling or capitalisation differences. Preserve source values; use TA_NAME for display names.",
+    "No separate city-outline feature was supplied. The city outline is derived from the ward polygons.",
+    "Geometry validity and lack of positive-area overlaps do not prove boundary completeness, absence of gaps, positional accuracy, or legal authority."
+  ],
+  "notes": "The original archive was supplied by the user. Its SHA-256 is recorded above. Use the accompanying boundary QA report and processed delivery package. Compare the 2018 geometry with current Blantyre City Council and National Spatial Data Centre records before policy-facing publication."
 }
