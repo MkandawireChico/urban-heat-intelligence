@@ -9,7 +9,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import numpy as np
-import rasterio
+import rasterio  # type: ignore[import-untyped]
 
 from heatadapt.landsat import (
     KELVIN_TO_CELSIUS,
