@@ -105,3 +105,12 @@ Do not publish neighbourhood rankings until the project has:
 - A reproducible alignment and aggregation method.
 - Explicit treatment of missing data and confidence.
 - A clear statement that the resulting map is a screening baseline, not a validated measure of personal heat exposure or health risk.
+
+
+## Blantyre boundary ingestion update (20 November 2026)
+
+The user-supplied World Bank archive has now been inspected. It contains one polygon layer (`MWI_BlantyreCity`) with 26 ward polygons in EPSG:32736. The source archive does not contain a separate city-outline feature. The project derives a provisional city outline by dissolving all 26 ward polygons and retains the original ward layer for ward-level aggregation.
+
+All 26 geometries are non-null, non-empty and structurally valid. Ward names and source IDs are unique. No positive-area overlaps were detected. The dissolved polygon is one connected geometry with an area of approximately 236.38 km². These checks do not establish completeness, absence of gaps, positional accuracy or legal authority. The source `TOTAL` field is zero for every ward and must not be used as population data.
+
+The boundary QA report and source provenance are recorded in `data/boundaries/BOUNDARY_QA_REPORT.json` and `data/boundaries/world_bank/blantyre_city_2018.json`. Processed GeoJSON and GeoPackage outputs were supplied in the boundary delivery package. Compare the geometry with current Blantyre City Council and National Spatial Data Centre records before policy-facing use.
