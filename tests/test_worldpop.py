@@ -7,7 +7,6 @@ from typing import Any
 import pytest
 
 from heatadapt import worldpop
-from heatadapt.worldpop import population_by_areas, population_in_area
 
 
 POLYGON = {
@@ -50,7 +49,7 @@ def test_queries_worldpop_and_returns_provenance(monkeypatch):
         return _Response(_payload())
 
     monkeypatch.setattr("heatadapt.worldpop.urlopen", fake_urlopen)
-    result = population_in_area(POLYGON, year=2025)
+    result = worldpop.population_in_area(POLYGON, year=2025)
 
     request = captured[0]
     sent = json.loads(request.data)
@@ -64,7 +63,7 @@ def test_queries_worldpop_and_returns_provenance(monkeypatch):
 @pytest.mark.parametrize("year", [2014, 2031])
 def test_rejects_unsupported_year(year):
     with pytest.raises(ValueError, match="2015 through 2030"):
-        population_in_area(POLYGON, year=year)
+        worldpop.population_in_area(POLYGON, year=year)
 
 
 def test_rejects_non_wgs84_coordinate_values():
@@ -73,12 +72,12 @@ def test_rejects_non_wgs84_coordinate_values():
         "coordinates": [[[300, 0], [301, 0], [301, 1], [300, 0]]],
     }
     with pytest.raises(ValueError, match="WGS84"):
-        population_in_area(invalid, year=2025)
+        worldpop.population_in_area(invalid, year=2025)
 
 
 def test_rejects_non_polygon_geometry():
     with pytest.raises(ValueError, match="Polygon or MultiPolygon"):
-        population_in_area({"type": "Point", "coordinates": [33.8, -15.8]}, year=2025)
+        worldpop.population_in_area({"type": "Point", "coordinates": [33.8, -15.8]}, year=2025)
 
 
 def test_rejects_mismatched_year_returned_by_api(monkeypatch):
@@ -87,7 +86,7 @@ def test_rejects_mismatched_year_returned_by_api(monkeypatch):
 
     monkeypatch.setattr("heatadapt.worldpop.urlopen", fake_urlopen)
     with pytest.raises(ValueError, match="requested"):
-        population_in_area(POLYGON, year=2025)
+        worldpop.population_in_area(POLYGON, year=2025)
 
 
 def test_reports_api_error_response(monkeypatch):
@@ -104,7 +103,7 @@ def test_reports_api_error_response(monkeypatch):
 
     monkeypatch.setattr("heatadapt.worldpop.urlopen", fake_urlopen)
     with pytest.raises(RuntimeError, match="No data"):
-        population_in_area(POLYGON, year=2025)
+        worldpop.population_in_area(POLYGON, year=2025)
 
 
 def test_reports_network_errors(monkeypatch):
@@ -113,7 +112,7 @@ def test_reports_network_errors(monkeypatch):
 
     monkeypatch.setattr("heatadapt.worldpop.urlopen", fake_urlopen)
     with pytest.raises(RuntimeError, match="Unable to reach"):
-        population_in_area(POLYGON, year=2025)
+        worldpop.population_in_area(POLYGON, year=2025)
 
 
 def _batch_features():
@@ -171,7 +170,7 @@ def test_batch_queries_all_areas_and_preserves_ids(monkeypatch):
         return _Response(_batch_payload())
 
     monkeypatch.setattr("heatadapt.worldpop.urlopen", fake_urlopen)
-    result = population_by_areas(_batch_features(), year=2025)
+    result = worldpop.population_by_areas(_batch_features(), year=2025)
 
     sent = json.loads(captured[0].data)
     assert captured[0].full_url == "https://api.worldpop.org/v3/batch"
@@ -199,14 +198,14 @@ def test_batch_queries_all_areas_and_preserves_ids(monkeypatch):
 )
 def test_batch_rejects_invalid_feature_collections(features, message):
     with pytest.raises(ValueError, match=message):
-        population_by_areas(features, year=2025)
+        worldpop.population_by_areas(features, year=2025)
 
 
 def test_batch_rejects_duplicate_ids():
     features = _batch_features()
     features["features"][1]["id"] = "ward-01"
     with pytest.raises(ValueError, match="Duplicate area id"):
-        population_by_areas(features, year=2025)
+        worldpop.population_by_areas(features, year=2025)
 
 
 def test_batch_rejects_mismatched_response_ids(monkeypatch):
@@ -218,4 +217,4 @@ def test_batch_rejects_mismatched_response_ids(monkeypatch):
 
     monkeypatch.setattr("heatadapt.worldpop.urlopen", fake_urlopen)
     with pytest.raises(ValueError, match="IDs do not match"):
-        population_by_areas(_batch_features(), year=2025)
+        worldpop.population_by_areas(_batch_features(), year=2025)
