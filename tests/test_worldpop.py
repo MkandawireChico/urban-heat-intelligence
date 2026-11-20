@@ -6,7 +6,7 @@ from urllib import error as urllib_error, request
 
 import pytest
 
-from heatadapt.worldpop import population_in_area
+from heatadapt.worldpop import population_by_areas, population_in_area
 
 
 POLYGON = {
@@ -113,3 +113,109 @@ def test_reports_network_errors(monkeypatch):
     monkeypatch.setattr("heatadapt.worldpop.urlopen", fake_urlopen)
     with pytest.raises(RuntimeError, match="Unable to reach"):
         population_in_area(POLYGON, year=2025)
+
+
+
+def _batch_features():
+    return {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "id": "ward-01",
+                "properties": {"name": "Central"},
+                "geometry": POLYGON,
+            },
+            {
+                "type": "Feature",
+                "id": "ward-02",
+                "properties": {"name": "North"},
+                "geometry": POLYGON,
+            },
+        ],
+    }
+
+
+def _batch_payload():
+    return {
+        "data_year": 2025,
+        "total": {"total_population": 1500.0, "area_km2": 2.0},
+        "features": [
+            {
+                "id": "ward-01",
+                "name": "Central",
+                "area_km2": 1.0,
+                "total_population": 1000.0,
+                "population_density": 1000.0,
+                "share_of_total": 0.6667,
+                "rank": 1,
+            },
+            {
+                "id": "ward-02",
+                "name": "North",
+                "area_km2": 1.0,
+                "total_population": 500.0,
+                "population_density": 500.0,
+                "share_of_total": 0.3333,
+                "rank": 2,
+            },
+        ],
+    }
+
+
+def test_batch_queries_all_areas_and_preserves_ids(monkeypatch):
+    captured: list[request.Request] = []
+
+    def fake_urlopen(req: urllib.request.Request, timeout: float = 60.0):
+        captured.append(req)
+        return _Response(_batch_payload())
+
+    monkeypatch.setattr("heatadapt.worldpop.urlopen", fake_urlopen)
+    result = population_by_areas(_batch_features(), year=2025)
+
+    sent = json.loads(captured[0].data)
+    assert captured[0].full_url == "https://api.worldpop.org/v3/batch"
+    assert sent == {"features": _batch_features(), "year": 2025}
+    assert result.total_population == 1500.0
+    assert [area.area_id for area in result.areas] == ["ward-01", "ward-02"]
+    assert result.areas[0].name == "Central"
+    assert result.areas[0].rank == 1
+
+
+@pytest.mark.parametrize(
+    ("features", "message"),
+    [
+        ({"type": "FeatureCollection", "features": []}, "between 1 and 1,000"),
+        (
+            {
+                "type": "FeatureCollection",
+                "features": [
+                    {"type": "Feature", "properties": {}, "geometry": POLYGON}
+                ],
+            },
+            "stable feature id",
+        ),
+    ],
+)
+def test_batch_rejects_invalid_feature_collections(features, message):
+    with pytest.raises(ValueError, match=message):
+        population_by_areas(features, year=2025)
+
+
+def test_batch_rejects_duplicate_ids():
+    features = _batch_features()
+    features["features"][1]["id"] = "ward-01"
+    with pytest.raises(ValueError, match="Duplicate area id"):
+        population_by_areas(features, year=2025)
+
+
+def test_batch_rejects_mismatched_response_ids(monkeypatch):
+    payload = _batch_payload()
+    payload["features"][1]["id"] = "ward-03"
+
+    def fake_urlopen(req: urllib.request.Request, timeout: float = 60.0):
+        return _Response(payload)
+
+    monkeypatch.setattr("heatadapt.worldpop.urlopen", fake_urlopen)
+    with pytest.raises(ValueError, match="IDs do not match"):
+        population_by_areas(_batch_features(), year=2025)
