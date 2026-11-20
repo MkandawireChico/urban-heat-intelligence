@@ -105,6 +105,6 @@
     "temporal_coverage": "Blantyre City shapefile last updated 2018-02-24; catalogue metadata updated 2023-01-19; uploaded archive inspected and 26 ward polygons structurally validated on 2026-11-20",
     "intended_use": "Approved provisional geometry for pipeline development, map extent tests and initial Blantyre city screening; not a current legal or planning boundary",
     "limitations": "The 2018 archive contains 26 valid ward polygons and no separate city-outline feature; the city outline is derived by dissolving the wards. The source TOTAL field is zero for all features and is not population data. Structural validity does not establish completeness, absence of gaps, positional accuracy or legal authority. Confirm current status against Blantyre City Council and the National Spatial Data Centre before policy-facing use.",
-    "status": "received_and_provisionally_validated"
+    "status": "downloaded"
   }
 ]
