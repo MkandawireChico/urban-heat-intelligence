@@ -1,0 +1,42 @@
+{
+  "source": {
+    "provider": "World Bank Data Catalog",
+    "dataset": "Malawi City Extents, dataset 0042046",
+    "source_page": "https://datacatalog.worldbank.org/search/dataset/0042046/malawi-city-extents",
+    "licence": "CC BY 4.0",
+    "source_last_updated": "2018-02-24",
+    "shapefile_metadata_creation_date": "2016-12-15",
+    "source_archive_sha256": "8687565564d0516b1f77a9ce64c09ca5d260e6e952ee8a7b550ed66dbe8cebc7"
+  },
+  "processing": {
+    "processed_on": "2026-11-20",
+    "source_layer": "MWI_BlantyreCity",
+    "source_crs": "EPSG:32736",
+    "geojson_crs": "EPSG:4326",
+    "source_feature_count": 26,
+    "geometry_type": "Polygon",
+    "valid_geometries": 26,
+    "null_or_empty_geometries": 0,
+    "unique_ward_names": 26,
+    "unique_source_ids": 26,
+    "positive_area_overlapping_ward_pairs": 0,
+    "dissolved_city_geometry_type": "Polygon",
+    "dissolved_city_connected_parts": 1,
+    "dissolved_city_holes": 0,
+    "sum_ward_area_km2": 236.38,
+    "dissolved_city_area_km2": 236.38,
+    "ward_area_min_km2": 2.512,
+    "ward_area_median_km2": 6.529,
+    "ward_area_max_km2": 25.356,
+    "bounds_wgs84": [34.963576, -15.891652, 35.125586, -15.697246],
+    "city_outline_supplied_separately": false,
+    "city_outline_derivation": "Union of all 26 ward polygons"
+  },
+  "warnings": [
+    "The source TOTAL field is 0 for all 26 features. It is not population data.",
+    "Some NAME3_ values contain spelling/capitalisation differences. TA_NAME is the preferred display field; original attributes are retained.",
+    "A zero positive-area overlap result does not prove absence of gaps or boundary misalignment.",
+    "Structural validity does not establish legal authority, positional accuracy, completeness or current planning status."
+  ],
+  "next_validation_gate": "Compare the 2018 geometry with current Blantyre City Council and National Spatial Data Centre boundary records before policy-facing use."
+}
