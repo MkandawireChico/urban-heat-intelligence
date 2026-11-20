@@ -4,9 +4,9 @@ import io
 import json
 from typing import Any
 
-import pytest
-
 from heatadapt import worldpop
+
+import pytest
 
 
 POLYGON = {
