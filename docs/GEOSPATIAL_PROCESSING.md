@@ -222,6 +222,37 @@ or country GeoTIFF files when cell-level overlays and population-weighted pixel
 analysis are required. Do not infer a ward-level population distribution from
 an aggregate total.
 
+
+For ward-level analysis, submit the 26 ward polygons in one batch request.
+Use the preserved `source_id` as each feature ID and `ward_name` as the label:
+
+```python
+import geopandas as gpd
+from heatadapt.worldpop import population_by_areas
+
+wards = gpd.read_file("data/boundaries/processed/blantyre_wards_2018.geojson")
+features = {
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "id": str(row.source_id),
+            "properties": {"name": row.ward_name},
+            "geometry": row.geometry.__geo_interface__,
+        }
+        for row in wards.itertuples()
+    ],
+}
+batch = population_by_areas(features, year=2025)
+print(batch.to_dict())
+```
+
+The returned ranks and shares describe only the submitted ward set and the
+requested WorldPop year. They are modelled estimates, not census counts. The
+client has automated tests using mocked API responses; live estimates for
+Blantyre have not yet been retrieved. Keep the API response and query geometry
+with the analysis outputs so the estimates remain auditable.
+
 WorldPop Global2 R2025A provides annual estimates for 2015–2030 at roughly
 100 m at the equator and is licensed CC BY 4.0. Values are modelled estimates,
 not census enumerations. Record the release, year, query geometry, returned
