@@ -145,7 +145,6 @@ def download_landsat_scene_assets(
     return metadata
 
 
-
 def main() -> int:
     """Download selected assets from a previously saved STAC discovery file."""
     parser = argparse.ArgumentParser(
