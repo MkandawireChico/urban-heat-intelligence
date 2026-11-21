@@ -60,7 +60,7 @@ def download_landsat_scene_assets(
         raise ValueError(f"Scene is missing required asset hrefs: {', '.join(missing)}")
 
     try:
-        import planetary_computer
+        import planetary_computer  # type: ignore[import-untyped]
     except ImportError as exc:
         raise RuntimeError(
             "Install the geo extra to download Landsat assets: pip install -e '.[geo]'"
