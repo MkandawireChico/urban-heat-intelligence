@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
+import sys
 import os
 import tempfile
 from datetime import UTC, datetime
@@ -141,3 +143,66 @@ def download_landsat_scene_assets(
     )
     os.replace(temporary_metadata, metadata_path)
     return metadata
+
+
+
+def main() -> int:
+    """Download selected assets from a previously saved STAC discovery file."""
+    parser = argparse.ArgumentParser(
+        prog="heatadapt-download-landsat",
+        description="Download quality-control and surface-temperature assets for one Landsat scene.",
+    )
+    parser.add_argument("--scenes", required=True, type=Path, help="STAC discovery JSON file")
+    parser.add_argument("--scene-id", required=True, help="Exact STAC item ID")
+    parser.add_argument("--output-dir", required=True, type=Path)
+    parser.add_argument(
+        "--assets",
+        nargs="+",
+        default=list(REQUIRED_ASSETS),
+        help="STAC asset keys to download (default: lwir11 qa_pixel qa_radsat)",
+    )
+    parser.add_argument("--timeout", type=float, default=180.0)
+    parser.add_argument("--force", action="store_true")
+    args = parser.parse_args()
+
+    try:
+        document = json.loads(args.scenes.read_text(encoding="utf-8"))
+        if document.get("record_type") != "landsat_stac_scene_discovery":
+            raise ValueError("Input is not a Landsat STAC discovery file")
+        matches = [
+            scene
+            for scene in document.get("scenes", [])
+            if scene.get("item_id") == args.scene_id
+        ]
+        if len(matches) != 1:
+            raise ValueError(
+                f"Expected one scene matching {args.scene_id!r}; found {len(matches)}"
+            )
+        result = download_landsat_scene_assets(
+            matches[0],
+            args.output_dir,
+            asset_keys=tuple(args.assets),
+            timeout_seconds=args.timeout,
+            force=args.force,
+        )
+    except (OSError, RuntimeError, ValueError, json.JSONDecodeError) as error:
+        print(f"Landsat download failed: {error}", file=sys.stderr)
+        return 1
+
+    print(
+        json.dumps(
+            {
+                "success": True,
+                "scene_id": result["scene"]["item_id"],
+                "output_dir": str(args.output_dir / args.scene_id),
+                "assets": list(result["assets"]),
+                "metadata": str(args.output_dir / args.scene_id / "scene_metadata.json"),
+            },
+            indent=2,
+        )
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
