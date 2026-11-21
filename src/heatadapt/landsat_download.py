@@ -5,8 +5,8 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import sys
 import os
+import sys
 import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
@@ -150,7 +150,9 @@ def main() -> int:
     """Download selected assets from a previously saved STAC discovery file."""
     parser = argparse.ArgumentParser(
         prog="heatadapt-download-landsat",
-        description="Download quality-control and surface-temperature assets for one Landsat scene.",
+        description=(
+            "Download quality-control and surface-temperature assets for one Landsat scene."
+        ),
     )
     parser.add_argument("--scenes", required=True, type=Path, help="STAC discovery JSON file")
     parser.add_argument("--scene-id", required=True, help="Exact STAC item ID")
