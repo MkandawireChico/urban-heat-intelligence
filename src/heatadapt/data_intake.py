@@ -142,7 +142,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         retrieved_at = datetime.now(UTC).isoformat()
         if args.command == "worldpop-raster":
             geometry = _single_geometry(collection)
-            result = download_population_raster(
+            raster_result = download_population_raster(
                 geometry,
                 year=args.year,
                 output_path=args.output,
@@ -159,9 +159,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                         "metadata_output": str(
                             args.output.with_suffix(args.output.suffix + ".json")
                         ),
-                        "file_bytes": result.file_bytes,
-                        "file_sha256": result.file_sha256,
-                        "total_population": result.total_population,
+                        "file_bytes": raster_result.file_bytes,
+                        "file_sha256": raster_result.file_sha256,
+                        "total_population": raster_result.total_population,
                     },
                     indent=2,
                 )
@@ -173,7 +173,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 id_field=args.id_field,
                 name_field=args.name_field,
             )
-            result = population_by_areas(
+            population_result = population_by_areas(
                 features,
                 year=args.year,
                 endpoint=args.endpoint,
@@ -190,7 +190,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "feature_count": len(features["features"]),
                 "id_field": args.id_field,
                 "name_field": args.name_field,
-                "result": result.to_dict(),
+                "result": population_result.to_dict(),
                 "interpretation": (
                     "Modelled polygon aggregates, not census counts or within-polygon "
                     "population surfaces."
