@@ -6,7 +6,6 @@ import sys
 from types import SimpleNamespace
 
 import pytest
-
 from heatadapt import landsat_download
 
 SCENE = {
