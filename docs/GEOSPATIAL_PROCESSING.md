@@ -382,7 +382,7 @@ downloads the surface-temperature band and both quality bands:
 ```bash
 heatadapt-download-landsat \
   --scenes data/interim/landsat_blantyre_2025_scenes.json \
-  --scene-id LC08_L2SP_168071_20251015_20251022_02_T1 \
+  --scene-id YOUR_EXACT_SCENE_ID \
   --output-dir data/raw/landsat
 ```
 
