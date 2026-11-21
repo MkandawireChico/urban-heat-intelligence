@@ -3,9 +3,8 @@ from __future__ import annotations
 import hashlib
 import json
 
-import pytest
-
 from heatadapt import worldpop_raster
+import pytest
 
 
 POLYGON = {
