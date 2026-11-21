@@ -7,7 +7,6 @@ import pytest
 
 from heatadapt import worldpop_raster
 
-
 POLYGON = {
     "type": "Polygon",
     "coordinates": [[[33.7, -15.9], [33.8, -15.9], [33.8, -15.8], [33.7, -15.9]]],
