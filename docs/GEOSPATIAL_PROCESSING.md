@@ -369,3 +369,38 @@ Set `expected_total_population` to the API's `X-Total-Population` response
 header when comparing the valid-cell sum with the API summary. Keep the
 reported difference in the analysis record. Do not silently adjust cell values
 to force a match.
+
+
+
+### Download selected Landsat scene assets
+
+After reviewing the discovery JSON, download assets for one exact scene ID.
+The optional `geo` dependencies include the Planetary Computer SDK, which
+requests short-lived SAS signatures for the public asset URLs. The command
+downloads the surface-temperature band and both quality bands:
+
+```bash
+heatadapt-download-landsat \
+  --scenes data/interim/landsat_blantyre_2025_scenes.json \
+  --scene-id LC08_L2SP_168071_20251015_20251022_02_T1 \
+  --output-dir data/raw/landsat
+```
+
+Replace the example scene ID with an exact ID in your discovery output. The
+default asset keys are `lwir11`, `qa_pixel` and `qa_radsat`. Files are
+written to a scene-specific directory with a `scene_metadata.json` sidecar.
+The sidecar records the acquisition metadata, unsigned source asset URLs,
+file sizes, content types and SHA-256 checksums. Temporary SAS query tokens
+are never persisted.
+
+Do not download every scene automatically. First compare acquisition dates,
+scene footprints, cloud cover and asset availability. Select a small set of
+temporally comparable scenes with adequate spatial coverage. Apply pixel-level
+QA before deriving surface temperature, then inspect valid-pixel coverage and
+observation counts before compositing.
+
+The downloaded `lwir11` band is a Level-2 surface-temperature product input.
+Use the existing Landsat scaling and QA functions. Do not interpret the output
+as near-surface air temperature or direct human heat exposure. The asset
+downloader verifies TIFF signatures and records checksums; raster readability,
+grid alignment and QA completeness still require downstream validation.
